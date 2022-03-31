@@ -723,12 +723,6 @@ function(pxr_register_test TEST_NAME)
         foreach(compareFile ${bt_DIFF_COMPARE})
             set(testWrapperCmd ${testWrapperCmd} --diff-compare=${compareFile})
         endforeach()
-
-        # For now the baseline directory is assumed by convention from the test
-        # name. There may eventually be cases where we'd want to specify it by
-        # an argument though.
-        set(baselineDir ${testenvDir}/baseline)
-        set(testWrapperCmd ${testWrapperCmd} --baseline-dir=${baselineDir})
     endif()
 
     if (bt_IMAGE_DIFF_COMPARE)
@@ -736,12 +730,6 @@ function(pxr_register_test TEST_NAME)
             foreach (compareFile ${bt_IMAGE_DIFF_COMPARE})
                 set(testWrapperCmd ${testWrapperCmd} --image-diff-compare=${compareFile})
             endforeach ()
-
-            # For now the baseline directory is assumed by convention from the test
-            # name. There may eventually be cases where we'd want to specify it by
-            # an argument though.
-            set(baselineDir ${testenvDir}/baseline)
-            set(testWrapperCmd ${testWrapperCmd} --baseline-dir=${baselineDir})
 
             if (bt_WARN)
                 set(testWrapperCmd ${testWrapperCmd} --warn=${bt_WARN})
@@ -775,6 +763,23 @@ function(pxr_register_test TEST_NAME)
             # it can be easily found within the testWrapper
             get_filename_component(IMAGE_DIFF_TOOL_PATH ${IMAGE_DIFF_TOOL} DIRECTORY)
             set(testWrapperCmd ${testWrapperCmd} --post-path=${IMAGE_DIFF_TOOL_PATH})
+        endif()
+    endif()
+
+    if (bt_DIFF_COMPARE OR bt_IMAGE_DIFF_COMPARE)
+        # Common settings we only want to set once if either is used
+        
+        # For now the baseline directory is assumed by convention from the test
+        # name. There may eventually be cases where we'd want to specify it by
+        # an argument though.
+        set(baselineDir ${testenvDir}/baseline)
+        set(testWrapperCmd ${testWrapperCmd} --baseline-dir=${baselineDir})
+
+        if (PXR_OUTPUT_FAILED_TEST_DIFFS)
+            # <PXR_CTEST_RUN_ID> will be set by CTestCustom.cmake, and then
+            # expanded by testWrapper.py
+            set(failuresDir ${CMAKE_BINARY_DIR}/Testing/Failed-Diffs/<PXR_CTEST_RUN_ID>/${TEST_NAME})
+            set(testWrapperCmd ${testWrapperCmd} --failures-dir=${failuresDir})
         endif()
     endif()
 
@@ -1233,3 +1238,19 @@ function(pxr_core_epilogue)
         set(_building_core FALSE PARENT_SCOPE)
     endif()
 endfunction() # pxr_core_epilogue
+
+function(pxr_tests_prologue)
+    add_custom_target(
+        test_setup
+        ALL
+        DEPENDS "${CMAKE_BINARY_DIR}/CTestCustom.cmake"
+    )
+    add_custom_command(
+        OUTPUT "${CMAKE_BINARY_DIR}/CTestCustom.cmake"
+        COMMAND ${CMAKE_COMMAND} -E copy
+            "${CMAKE_CURRENT_SOURCE_DIR}/cmake/defaults/CTestCustom.cmake"
+            "${CMAKE_BINARY_DIR}/CTestCustom.cmake"
+        DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/cmake/defaults/CTestCustom.cmake"
+        COMMENT "Copying CTestCustom.cmake"
+    )
+endfunction() # pxr_tests_prologue

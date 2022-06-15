@@ -102,8 +102,9 @@ def _parseArgs():
             help=('If either --diff-compare or --image-diff-compare fail, then '
                   'copy both the generated and baseline images into this '
                   'directory; if <PXR_CTEST_RUN_ID>" is in the value, it is '
-                  'with a timestamp identifying a given ctest invocation'))
-    
+                  'replaced with a timestamp identifying a given ctest '
+                  'invocation'))
+
     parser.add_argument('--expected-return-code', type=int, default=0,
             help='Expected return code of this test.')
     parser.add_argument('--env-var', dest='envVars', default=[], type=str, 
@@ -275,6 +276,13 @@ def _copyFailedDiffFiles(failuresDir, baselineFile, resultFile):
     shutil.copy(baselineFile, baselineOutpath)
     shutil.copy(resultFile, resultOutpath)
 
+    print("Image diff failure:\n"
+          "  Copied:\n"
+          "    {baselineName}\n"
+          "    {resultName}\n"
+          "  Into:\n"
+          "    {failuresDir}".format(**locals()))
+
 # subprocess.call returns -N if the process raised signal N. Convert this
 # to the standard positive error code matching that signal. e.g. if the
 # process encounters an SIGABRT signal it will return -6, but we really
@@ -411,7 +419,7 @@ if __name__ == '__main__':
     failuresDir = None
     if args.failures_dir:
         failuresDir = args.failures_dir.replace('<PXR_CTEST_RUN_ID>',
-            os.environ.get('PXR_CTEST_RUN_ID', '<NOT_RUN_FROM_CTEST>'))
+            os.environ.get('PXR_CTEST_RUN_ID', 'NOT_RUN_FROM_CTEST'))
     if args.diff_compare:
         for diff in args.diff_compare:
             if not _diff(diff, args.baseline_dir, args.verbose,

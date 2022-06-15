@@ -768,19 +768,17 @@ function(pxr_register_test TEST_NAME)
 
     if (bt_DIFF_COMPARE OR bt_IMAGE_DIFF_COMPARE)
         # Common settings we only want to set once if either is used
-        
+
         # For now the baseline directory is assumed by convention from the test
         # name. There may eventually be cases where we'd want to specify it by
         # an argument though.
         set(baselineDir ${testenvDir}/baseline)
         set(testWrapperCmd ${testWrapperCmd} --baseline-dir=${baselineDir})
 
-        if (PXR_OUTPUT_FAILED_TEST_DIFFS)
-            # <PXR_CTEST_RUN_ID> will be set by CTestCustom.cmake, and then
-            # expanded by testWrapper.py
-            set(failuresDir ${CMAKE_BINARY_DIR}/Testing/Failed-Diffs/<PXR_CTEST_RUN_ID>/${TEST_NAME})
-            set(testWrapperCmd ${testWrapperCmd} --failures-dir=${failuresDir})
-        endif()
+        # <PXR_CTEST_RUN_ID> will be set by CTestCustom.cmake, and then
+        # expanded by testWrapper.py
+        set(failuresDir ${CMAKE_BINARY_DIR}/Testing/Failed-Diffs/<PXR_CTEST_RUN_ID>/${TEST_NAME})
+        set(testWrapperCmd ${testWrapperCmd} --failures-dir=${failuresDir})
     endif()
 
     if (bt_CLEAN_OUTPUT)

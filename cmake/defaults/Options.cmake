@@ -24,9 +24,6 @@
 option(PXR_STRICT_BUILD_MODE "Turn on additional warnings. Enforce all warnings as errors." OFF)
 option(PXR_VALIDATE_GENERATED_CODE "Validate script generated code" OFF)
 option(PXR_HEADLESS_TEST_MODE "Disallow GUI based tests, useful for running under headless CI systems." OFF)
-option(PXR_OUTPUT_FAILED_TEST_DIFFS
-    "Copy failed diff/image diff tests into \${CMAKE_BINARY_DIR}/Testing/Failed-Diffs/<PXR_CTEST_RUN_ID>/\${TEST_NAME}. <PXR_CTEST_RUN_ID> is automatically set per ctest-invocation, or read from an environment variable of the same name if set."
-    OFF)
 option(PXR_BUILD_TESTS "Build tests" ON)
 option(PXR_BUILD_EXAMPLES "Build examples" ON)
 option(PXR_BUILD_TUTORIALS "Build tutorials" ON)

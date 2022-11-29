@@ -761,9 +761,21 @@ class TestGfMatrix(unittest.TestCase):
         for Matrix in Matrices:
             # Test GetDeterminant and GetInverse on Matrix4
             def AssertDeterminant(m, det):
+                print(f"AssertDeterminant({m!r}, {det!r})")
                 # Unfortunately, we don't have an override of Gf.IsClose
                 # for Gf.Matrix4*
-                for row1, row2 in zip(m * m.GetInverse(), Matrix()):
+                mInv = m.GetInverse()
+                for i, (row1, row2) in enumerate(zip(m * m.GetInverse(), Matrix())):
+                    delta = row1 - row2;
+                    len2 = delta * delta
+                    print(f"  row {i}:")
+                    print(f"    m[{i}]: {m[i]!r}")
+                    print(f"    m-1[{i}]: {mInv[i]!r}")
+                    print(f"    m*m-1[{i}]: {row1!r}")
+                    print(f"    identity[{i}]: {row2!r}")
+                    print(f"    delta: {delta}")
+                    print(f"    len**2: {len2}")
+                    print(f"    len: {len2**.5}")
                     self.assertTrue(Gf.IsClose(row1, row2, 1e-6))
                 self.assertTrue(Gf.IsClose(m.GetDeterminant(), det, 1e-6))
 

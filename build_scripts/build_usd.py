@@ -225,18 +225,65 @@ def GetPythonInfo(context):
     elif Linux():
         pythonMultiarchSubdir = sysconfig.get_config_var("multiarchsubdir")
         # Try multiple ways to get the python lib dir
-        for pythonLibDir in (sysconfig.get_config_var("LIBDIR"),
-                             os.path.join(pythonBaseDir, "lib")):
+        possibleLibPaths = []
+        for pythonLibDir in (
+            sysconfig.get_config_var("LIBDIR"),
+            os.path.join(pythonBaseDir, "lib"),
+        ):
             if pythonMultiarchSubdir:
-                pythonLibPath = \
-                    os.path.join(pythonLibDir + pythonMultiarchSubdir,
-                                 _GetPythonLibraryFilename(context))
-                if os.path.isfile(pythonLibPath):
-                    break
-            pythonLibPath = os.path.join(pythonLibDir,
-                                         _GetPythonLibraryFilename(context))
+                pythonLibPath = os.path.join(
+                    pythonLibDir + pythonMultiarchSubdir,
+                    _GetPythonLibraryFilename(context),
+                )
+                possibleLibPaths.append(pythonLibPath)
+            pythonLibPath = os.path.join(
+                pythonLibDir, _GetPythonLibraryFilename(context)
+            )
+            possibleLibPaths.append(pythonLibPath)
+        for pythonLibPath in possibleLibPaths:
             if os.path.isfile(pythonLibPath):
                 break
+        else:
+            # we couldn't find a pythonLibPath
+            # some (anaconda) pythons report the incorrect file extension -
+            # ie, they return "libpython3.10.a" when what exists on disk is
+            # "libpython3.10.so".  Check for this scenario.
+
+            def _GetAlternateLibExts(oldLibPath):
+                pathbase, oldExt = os.path.splitext(oldLibPath)
+                newExt = {
+                    ".so": ".a",
+                    ".a": ".so",
+                }.get(oldExt.lower())
+                if newExt:
+                    return [pathbase + newExt]
+
+                # sometimes .so files have a version appended, ie, .so.2.3
+                soIndex = oldLibPath.find(".so.")
+                if soIndex == -1:
+                    # we don't know the extension of this path, we can't
+                    # suggest any alternatives
+                    return []
+
+                # if we have, ie:
+                #     mylib.so.2.3
+                # then try both:
+                #     mylib.a.2.3
+                #     mylib.a
+                return [
+                    oldLibPath.replace(".so.", ".a."),
+                    oldLibPath[:soIndex] + ".a",
+                ]
+
+            pythonLibPath = None
+            for oldLibPath in possibleLibPaths:
+                for newLibPath in _GetAlternateLibExts(oldLibPath):
+                    if os.path.isfile(newLibPath):
+                        pythonLibPath = newLibPath
+                        break
+            if pythonLibPath is None:
+                # we couldn't find the python library
+                raise RuntimeError("unable to find python library")
     elif MacOS():
         pythonLibPath = os.path.join(pythonBaseDir, "lib",
                                      _GetPythonLibraryFilename(context))

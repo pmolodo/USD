@@ -426,6 +426,24 @@ AmIBeingDebugged()
     return junk == 0 && ( (info.kp_proc.p_flag & P_TRACED) != 0 );
 }
 
+#elif defined(ARCH_OS_WINDOWS)
+
+static
+bool
+Arch_DebuggerIsAttachedWindows()
+{
+    if (IsDebuggerPresent()) {
+        return true;
+    }
+
+    BOOL remoteDebuggerEnabled;
+    CheckRemoteDebuggerPresent(GetCurrentProcess(), &remoteDebuggerEnabled);
+    if (remoteDebuggerEnabled) {
+        return true;
+    }
+    return false;
+}
+
 #endif // defined(ARCH_OS_LINUX)
 
 static
@@ -624,7 +642,7 @@ ArchDebuggerIsAttached()
 {
     Arch_DebuggerInit();
 #if defined(ARCH_OS_WINDOWS)
-    return IsDebuggerPresent() == TRUE;
+    return Arch_DebuggerIsAttachedWindows();
 #elif defined(ARCH_OS_DARWIN)
     return AmIBeingDebugged();
 #elif defined(ARCH_OS_LINUX)

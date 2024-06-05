@@ -44,6 +44,12 @@ pxr_plugin(hdEmbree
         context.h
         renderParam.h
 
+    PRIVATE_HEADERS
+        pxrIES/ies.h
+
+    CPPFILES
+        pxrIES/ies.cpp
+
     PRIVATE_CLASSES
         implicitSurfaceSceneIndexPlugin
 

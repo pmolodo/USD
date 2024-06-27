@@ -301,11 +301,18 @@ public:
     // --------------------------------------------------------------------- //
     /// Scales the brightness of the light linearly.
     ///
-    /// Lights' emission is in units of spectral radiance normalized such that 
-    /// a directly visible light normally incident upon the sensor plane will 
-    /// generate a pixel value of [1, 1, 1] in an RGB renderer, and thus have a 
-    /// luminance of 1 nit. A light with `intensity` 2 would therefore have a 
-    /// luminance of 2 nits.
+    /// Expresses the "base", unmultiplied luminance of the light, in nits:
+    ///
+    /// ```
+    /// LeScalar = intensity;
+    /// ```
+    ///
+    /// More precisely, the lights' emission is in units of spectral radiance
+    /// normalized such that a directly visible light with `intensity` 1 and
+    /// `exposure` 0` normally incident upon the sensor plane will generate a
+    /// pixel value of [1, 1, 1] in an RGB renderer, and thus have a luminance
+    /// of 1 nit. A light with `intensity` 2 and `exposure` 0 would therefore
+    /// have a luminance of 2 nits.
     ///
     /// | ||
     /// | -- | -- |
@@ -329,13 +336,18 @@ public:
     // --------------------------------------------------------------------- //
     /// Scales the brightness of the light exponentially as a power
     /// of 2 (similar to an F-stop control over exposure).  The result
-    /// is multiplied against the intensity.
+    /// is multiplied against the intensity:
     ///
-    /// Lights' emission is in units of spectral radiance normalized such that 
-    /// a directly visible light normally incident upon the sensor plane will 
-    /// generate a pixel value of [1, 1, 1] in an RGB renderer, and thus have a 
-    /// luminance of 1 nit. A light with `intensity` 1 and `exposure` 2 would 
-    /// therefore have a luminance of 4 nits.
+    /// ```
+    /// LeScalar = LeScalar * pow(2, exposure);
+    /// ```
+    ///
+    /// More precisely, the lights' emission is in units of spectral radiance
+    /// normalized such that a directly visible light with `intensity` 1 and
+    /// `exposure` 0` normally incident upon the sensor plane will generate a
+    /// pixel value of [1, 1, 1] in an RGB renderer, and thus have a luminance
+    /// of 1 nit. A light with `intensity` 1 and `exposure` 2 would therefore
+    /// have a luminance of 4 nits.
     ///
     /// | ||
     /// | -- | -- |
@@ -403,22 +415,60 @@ public:
     // --------------------------------------------------------------------- //
     // NORMALIZE 
     // --------------------------------------------------------------------- //
-    /// Normalizes brightness by the surface area of the light.
+    /// Normalizes the light such that the overall power of the light
+    /// remains constant when the size of the light changes.
     /// This makes it easier to independently adjust the power and shape
-    /// of the light, by causing the brightness to not vary with the area or
-    /// angular size of the light.
-    /// 
-    /// For an area light, this is calculated by dividing the emission
-    /// by the surface area (in world space) of the shape of the light, including
-    /// any scaling applied to the light by its transform stack.
+    /// of the light, by causing the total illumination provided by a light to
+    /// not vary with the area or angular size of the light.
     ///
-    /// For a distant light, this is calculated by dividing the proportion of the
-    /// visible hemisphere subtended by the light, that is by `sin(theta)*sin(theta)*M_PI`,
-    /// where `theta` is half the value of the distant light's `angle` attribute.
-    /// If `angle` is zero, this attribute has no effect.
+    /// Functionally, this means that the luminance of the light will be divided
+    /// by a factor representing the "size" of the light:
     ///
-    /// For a dome light, this attribute is ignored.
-    /// 
+    /// ```
+    /// LeScalar = LeScalar / sizeFactor;
+    /// ```
+    ///
+    /// ...where `sizeFactor` = 1 if `normalize` is off, and is calculated
+    /// depending on the type of the light as described below if `normalize` is
+    /// on.
+    ///
+    /// For an area light, the `sizeFactor` is the surface area (in world
+    /// space) of the shape of the light, including any scaling applied to the
+    /// light by its transform stack.
+    ///
+    /// ```
+    /// if (IsAreaLight(light)) {
+    ///     sizeFactor = CalcWorldSpaceSurfaceArea(light);
+    /// }
+    /// ```
+    ///
+    /// For a distant light with `angle` = 0, this attribute is ignored.
+    /// For a distant light with non-zero `angle` attribute, it is the
+    /// proportion of the visible hemisphere subtended by the light, that is:
+    ///
+    /// ```
+    /// if (IsDistantLight(light)) {
+    ///     if (angle == 0) {
+    ///         sizeFactor = 1
+    ///     } else {
+    ///         const float theta = (angle / 2) * M_PI / 180;
+    ///         sizeFactor = sinf(theta) * sinf(theta) * 2 * M_PI;
+    ///     }
+    /// }
+    /// ```
+    ///
+    ///     NOTE: original formula was * PI, not 2 PI - I'm assuming this was a
+    ///           mistake, as I would think that angle = 180 would mean the
+    ///           light emits from the hemisphere, and the area of a hemisphere
+    ///           is 2 PI.
+    ///
+    /// For a dome light, this attribute is ignored:
+    ///
+    /// ```
+    /// if (IsDomeLight(light)) {
+    ///     sizeFactor = 1;
+    /// }
+    /// ```
     ///
     /// | ||
     /// | -- | -- |
@@ -445,7 +495,8 @@ public:
     /// This color is just multiplied with the emission. In the case of a spectral
     /// renderer, this color should be uplifted such that it round-trips to within 
     /// the limit of numerical accuracy under the rendering illuminant.
-    /// 
+    ///
+    /// Le = GfCompMult(color, LeScalar);
     ///
     /// | ||
     /// | -- | -- |

@@ -158,8 +158,12 @@ public:
     /// This is implemented as a multiplication with the dot product between the
     /// light's surface normal and the emission direction, raised to the power `focus`,
     ///  i.e. 
+    ///
     /// ```
-    /// Le = GfCompMult(Le, powf(emissionDirection * lightNormal, focus))
+    /// if (focus > 0.0) {
+    ///     const float focusFactor = powf(emissionDirection * lightNormal, focus);
+    ///     Le = GfCompMult(Le, powf(emissionDirection * lightNormal, focus));
+    /// }
     /// ```
     ///
     ///
@@ -190,7 +194,7 @@ public:
     /// white, by the factor computed from the focus attribute, in other words:
     ///
     /// ```
-    /// if (focus > 0.0f) {
+    /// if (focus > 0.0) {
     ///     const float focusFactor = powf(emissionDirection * lightNormal, focus);
     ///     const GfVec3f focusTintFactor = lerp(focusTint, GfVec3f(1), focusFactor);
     ///     Le = GfCompMult(Le, focusTintFactor);
@@ -217,17 +221,24 @@ public:
     // --------------------------------------------------------------------- //
     // SHAPING:CONE:ANGLE 
     // --------------------------------------------------------------------- //
-    /// Angular limit off the primary axis to restrict the
-    /// light spread.
+    /// Angular limit off the primary axis to restrict the light spread, in
+    /// degrees.
+    ///
+    /// Light emissions at angles off the primary axis greater than this are
+    /// guaranteed to be zero, ie:
     ///
     /// ```
-    /// const float cosThetaC = cosf(light.shaping.coneAngle * M_PI / 180.0f);
-    /// const float cosThetaS = Lerp(cosThetaC, 1.0f, light.shaping.coneSoftness);
-    /// const float thetaC = light.shaping.coneAngle * M_PI / 180.0f;
-    /// const float thetaS = Lerp(thetaC, 0.0f, light.shaping.coneSoftness);
-    /// const float thetaOZ = acosf(lightZ * emissionDir);
-    /// Le *= 1.0f - Smoothstep(thetaS, thetaC, thetaOZ);
+    /// const float thetaEmissionOffAxis = acosf(lightNormal * emissionDir);
+    /// const float thetaCutoff = coneAngle * M_PI / 180.0f;
+    /// if (thetaEmissionOffAxis > thetaCutoff) {
+    ///     Le = 0;
+    /// }
     /// ```
+    ///
+    /// For angles < coneAngle, behavior is determined by shaping:cone:softness
+    /// - see below.  But at the default of coneSoftness = 0, the luminance is
+    /// unaltered if the emissionOffAxisAngle <= coneAngle, so the coneAngle
+    /// functions as a hard binary "off" toggle for all angles > coneAngle.
     ///
     /// | ||
     /// | -- | -- |
@@ -250,14 +261,21 @@ public:
     // SHAPING:CONE:SOFTNESS 
     // --------------------------------------------------------------------- //
     /// Controls the cutoff softness for cone angle.
-    /// 
+    ///
+    /// At the default of coneSoftness = 0, the luminance is unaltered if the
+    /// emissionOffAxisAngle <= coneAngle, and 0 if
+    /// emissionOffAxisAngle > coneAngle, so in this situation the coneAngle
+    /// functions as a hard binary "off" toggle for all angles > coneAngle.
+    ///
+    /// For 0 < coneSoftness <= 1, it defines the proportion of the the
+    /// non-cutoff angles that are attenuated with a coneAngleFactor that is
+    /// transitioning between 0 and 1.  More precisely:
+    ///
     /// ```
-    /// const float cosThetaC = cosf(light.shaping.coneAngle * M_PI / 180.0f);
-    /// const float cosThetaS = Lerp(cosThetaC, 1.0f, light.shaping.coneSoftness);
-    /// const float thetaC = light.shaping.coneAngle * M_PI / 180.0f;
-    /// const float thetaS = Lerp(thetaC, 0.0f, light.shaping.coneSoftness);
-    /// const float thetaOZ = acosf(lightZ * emissionDir);
-    /// Le *= 1.0f - Smoothstep(thetaS, thetaC, thetaOZ);
+    /// const float thetaEmissionOffAxis = acosf(lightNormal * emissionDir);
+    /// const float thetaCutoff = coneAngle * M_PI / 180.0f;
+    /// const float thetaSmoothStart = Lerp(thetaCutoff, 0.0f, coneSoftness);
+    /// Le *= 1.0f - Smoothstep(thetaSmoothStart, thetaCutoff, thetaEmissionOffAxis);
     /// ```
     ///
     ///

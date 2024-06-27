@@ -144,9 +144,6 @@ exposure via UsdGeomCamera::GetExposureAttr() and it is expected that all render
 implementing UsdLux must respect the value of that attribute by scaling the rendered 
 image by \c pow(2, exposure).
 
-NOTE: Does this mean that most cameras will need to have a negative exposure value if you want to use physically
-plausible light units?
-
 \subsection usdLux_Behavior Properties & Behavior
 
 Colors specified in attributes are in energy-linear terms,

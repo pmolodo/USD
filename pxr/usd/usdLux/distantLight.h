@@ -141,10 +141,6 @@ public:
     /// Higher values broaden the light and therefore soften shadow edges.
     /// 
     ///
-    ///  TODO: determine max value (ie, is it 180, so the light can at most emit
-    ///        light from one hemisphere - or is it 360, so a distant light can
-    ///        emit light from all angles?)
-    ///
     /// | ||
     /// | -- | -- |
     /// | Declaration | `float inputs:angle = 0.53` |

@@ -457,11 +457,6 @@ public:
     /// }
     /// ```
     ///
-    ///     NOTE: original formula was * PI, not 2 PI - I'm assuming this was a
-    ///           mistake, as I would think that angle = 180 would mean the
-    ///           light emits from the hemisphere, and the area of a hemisphere
-    ///           is 2 PI.
-    ///
     /// For a dome light, this attribute is ignored:
     ///
     /// ```

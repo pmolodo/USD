@@ -301,7 +301,8 @@ public:
     // --------------------------------------------------------------------- //
     /// Scales the brightness of the light linearly.
     ///
-    /// Expresses the "base", unmultiplied luminance of the light, in nits:
+    /// Expresses the "base", unmultiplied luminance emitted (Le) of the light,
+    /// in nits:
     ///
     /// ```
     /// LeScalar = intensity;
@@ -415,14 +416,17 @@ public:
     // --------------------------------------------------------------------- //
     // NORMALIZE 
     // --------------------------------------------------------------------- //
-    /// Normalizes the light such that the overall power of the light
-    /// remains constant when the size of the light changes.
+    /// Normalizes the light such that the overall power (ie, lumen) and
+    /// luminous intensity (ie, candela) of the light remain constant while
+    /// altering the size of the light. It does so by scaling the luminance (ie,
+    /// nits) by a factor inversely proportional to the size.
+    ///
     /// This makes it easier to independently adjust the power and shape
     /// of the light, by causing the total illumination provided by a light to
     /// not vary with the area or angular size of the light.
     ///
-    /// Functionally, this means that the luminance of the light will be divided
-    /// by a factor representing the "size" of the light:
+    /// More precisely, this means that the luminance of the light will be
+    /// divided by a factor representing the "size" of the light:
     ///
     /// ```
     /// LeScalar = LeScalar / sizeFactor;
@@ -491,7 +495,9 @@ public:
     /// renderer, this color should be uplifted such that it round-trips to within 
     /// the limit of numerical accuracy under the rendering illuminant.
     ///
+    /// ```
     /// Le = GfCompMult(color, LeScalar);
+    /// ```
     ///
     /// | ||
     /// | -- | -- |

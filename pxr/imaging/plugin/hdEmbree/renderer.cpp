@@ -70,6 +70,12 @@ HdEmbreeRenderer::SetEnableSceneColors(bool enableSceneColors)
 }
 
 void
+HdEmbreeRenderer::SetRandomNumberSeed(int randomNumberSeed)
+{
+    _randomNumberSeed = randomNumberSeed;
+}
+
+void
 HdEmbreeRenderer::SetDataWindow(const GfRect2i &dataWindow)
 {
     _dataWindow = dataWindow;
@@ -497,7 +503,12 @@ HdEmbreeRenderer::_RenderTiles(HdRenderThread *renderThread,
 
     // Initialize the RNG for this tile (each tile creates one as
     // a lazy way to do thread-local RNGs).
-    size_t seed = std::chrono::system_clock::now().time_since_epoch().count();
+    size_t seed;
+    if (_randomNumberSeed == -1) {
+        seed = std::chrono::system_clock::now().time_since_epoch().count();
+    } else {
+        seed = static_cast<size_t>(_randomNumberSeed);
+    }
     seed = TfHash::Combine(seed, tileStart);
     std::default_random_engine random(seed);
 

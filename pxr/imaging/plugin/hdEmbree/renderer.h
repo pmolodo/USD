@@ -81,6 +81,12 @@ public:
     ///                            everything as white.
     void SetEnableSceneColors(bool enableSceneColors);
 
+    /// Sets a number to seed the random number generator with.
+    ///   \param randomNumberSeed If -1, then the random number generator
+    ///                           is seeded in a non-deterministic way;
+    ///                           otherwise, it is seeded with this value.
+    void SetRandomNumberSeed(int randomNumberSeed);
+
     /// Rendering entrypoint: add one sample per pixel to the whole sample
     /// buffer, and then loop until the image is converged.  After each pass,
     /// the image will be resolved into a color buffer.
@@ -184,6 +190,8 @@ private:
     int _ambientOcclusionSamples;
     // Should we enable scene colors?
     bool _enableSceneColors;
+    // If other than -1, use this to seed the random number generator with.
+    int _randomNumberSeed;
 
     // How many samples have been completed.
     std::atomic<int> _completedSamples;

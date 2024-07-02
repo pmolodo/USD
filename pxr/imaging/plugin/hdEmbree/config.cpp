@@ -41,6 +41,13 @@ TF_DEFINE_ENV_SETTING(HDEMBREE_CAMERA_LIGHT_INTENSITY, 300,
 TF_DEFINE_ENV_SETTING(HDEMBREE_PRINT_CONFIGURATION, 0,
         "Should HdEmbree print configuration on startup? (values > 0 are true)");
 
+TF_DEFINE_ENV_SETTING(HDEMBREE_RANDOM_NUMBER_SEED, -1,
+        "Seed to give to the random number generator. A value of anything other"
+        " than -1, combined with setting PXR_WORK_THREAD_LIMIT=1, should"
+        " give deterministic / repeatable results. A value of -1 (the"
+        " default) will allow the implementation to set a value that varies"
+        " from invocation to invocation and thread to thread.");
+
 HdEmbreeConfig::HdEmbreeConfig()
 {
     // Read in values from the environment, clamping them to valid ranges.
@@ -54,6 +61,7 @@ HdEmbreeConfig::HdEmbreeConfig()
     useFaceColors = (TfGetEnvSetting(HDEMBREE_USE_FACE_COLORS) > 0);
     cameraLightIntensity = (std::max(100,
             TfGetEnvSetting(HDEMBREE_CAMERA_LIGHT_INTENSITY)) / 100.0f);
+    randomNumberSeed = TfGetEnvSetting(HDEMBREE_RANDOM_NUMBER_SEED);
 
     if (TfGetEnvSetting(HDEMBREE_PRINT_CONFIGURATION) > 0) {
         std::cout
@@ -70,6 +78,8 @@ HdEmbreeConfig::HdEmbreeConfig()
             <<    useFaceColors           << "\n"
             << "  cameraLightIntensity      = "
             <<    cameraLightIntensity    << "\n"
+            << "  randomNumberSeed          = "
+            <<    randomNumberSeed        << "\n"
             ;
     }
 }

@@ -19,8 +19,37 @@
 
 #include "pxr/base/tf/hash.h"
 
+#include <tbb/tbb_stddef.h>
+#if TBB_INTERFACE_VERSION_MAJOR < 12
+#include <tbb/task_scheduler_init.h>
+#endif
+
 #include <chrono>
+#include <memory>
 #include <thread>
+
+namespace {
+    PXR_NAMESPACE_USING_DIRECTIVE
+
+#if TBB_INTERFACE_VERSION_MAJOR < 12
+    // Make the calling context respect PXR_WORK_THREAD_LIMIT, if run from a thread other than the
+    // main thread (ie, the renderThread)
+    class ScopedThreadScheduler {
+    public:
+        ScopedThreadScheduler() {
+            auto limit = WorkGetConcurrencyLimitEnvSetting();
+            if (limit != 0) {
+                _tbbTaskSchedInit = std::make_unique<tbb::task_scheduler_init>(limit);
+            }
+        }
+
+        std::unique_ptr<tbb::task_scheduler_init> _tbbTaskSchedInit;
+    };
+#else
+    class ScopedThreadScheduler {
+    };
+#endif
+}
 
 PXR_NAMESPACE_OPEN_SCOPE
 
@@ -435,6 +464,7 @@ HdEmbreeRenderer::Render(HdRenderThread *renderThread)
 
         // Render by scheduling square tiles of the sample buffer in a parallel
         // for loop.
+        ScopedThreadScheduler scheduler;
         // Always pass the renderThread to _RenderTiles to allow the first frame
         // to be interrupted.
         WorkParallelForN(numTilesX*numTilesY,

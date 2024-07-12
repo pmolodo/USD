@@ -27,6 +27,7 @@ from __future__ import print_function
 import dataclasses
 import sys, os, re, inspect
 import keyword
+import textwrap
 import traceback
 from argparse import ArgumentParser
 from collections import namedtuple
@@ -119,6 +120,9 @@ USERDOC_FULL = "userDoc"
 
 _writeLineSep = None
 
+TRAILING_WHITESPACE_RE = re.compile(r"\s+$", re.MULTILINE)
+useSmartWhitespace = False
+
 
 def _SanitizeDoc(doc, leader):
     """Cleanup the doc string in several ways:
@@ -128,7 +132,49 @@ def _SanitizeDoc(doc, leader):
     """
     if doc is None:
         return ''
-    
+
+    if useSmartWhitespace:
+        # the documentation is often specified in lines like this:
+        #
+        #     doc = """blah blah
+        #         more stuff blab blab blab
+        #         yet another line here"""
+        #
+        # ...and so often has extra unnecessary leading whitespace.
+        # However, in some cases leading whitespace may be intentional, ie:
+        #
+        #     doc = """blah blah
+        #         Here's some python code:
+        #
+        #         ```
+        #         if(condition):
+        #             doStuff()
+        #         ```
+        #         """
+        #
+        # Try to distinguish between the two cases by finding the "common"
+        # leading whitespace for all non-empty lines other than the first.
+
+        if "\n" in doc:
+            first, rest = doc.split("\n", 1)
+        else:
+            first, rest = doc, None
+
+        first = first.lstrip()
+
+        if rest is None:
+            lines = [first]
+        else:
+            # make use of textwrap.dedent to strip common whitespace from lines
+            # other than the first
+            rest = textwrap.dedent(rest)
+            lines = [first] + rest.split("\n")
+        joined = leader.join(lines)
+
+        # finally, strip trailing whitespace - to deal with leaders that
+        # include training whitespace, like '\n    /// ' when used to join
+        # empty lines.
+        return TRAILING_WHITESPACE_RE.sub("", joined)
     return leader.join([line.lstrip() for line in doc.split('\n')])
 
 
@@ -1830,6 +1876,11 @@ if __name__ == '__main__':
         default='.',
         help='The target directory where the code should be generated. '
         '[Default: %(default)s]')
+    parser.add_argument('-s', '--smart-whitespace',
+        action='store_true',
+        help='Use a more intelligent method for striping leading whitespace '
+             'from docstrings, that attempts to preserve "intentional" '
+             'leading whitespace')
     parser.add_argument('--newline',
         choices=('linux', 'windows', 'os'),
         default='os',
@@ -1902,6 +1953,7 @@ if __name__ == '__main__':
         namespaceClose = 'PXR_NAMESPACE_CLOSE_SCOPE'
         namespaceUsing = 'PXR_NAMESPACE_USING_DIRECTIVE'
 
+    useSmartWhitespace = args.smart_whitespace
     Print.SetQuiet(args.quiet)
 
     _writeLineSep = {

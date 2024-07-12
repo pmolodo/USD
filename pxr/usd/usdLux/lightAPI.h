@@ -301,11 +301,11 @@ public:
     // --------------------------------------------------------------------- //
     /// Scales the brightness of the light linearly.
     ///
-    /// Expresses the "base", unmultiplied luminance emitted (Le) of the light,
+    /// Expresses the "base", unmultiplied luminance emitted (L) of the light,
     /// in nits:
     ///
     /// ```
-    /// LeScalar = intensity;
+    /// LScalar = intensity;
     /// ```
     ///
     /// More precisely, the lights' emission is in units of spectral radiance
@@ -340,7 +340,7 @@ public:
     /// is multiplied against the intensity:
     ///
     /// ```
-    /// LeScalar = LeScalar * pow(2, exposure);
+    /// LScalar = LScalar * pow(2, exposure);
     /// ```
     ///
     /// More precisely, the lights' emission is in units of spectral radiance
@@ -416,10 +416,9 @@ public:
     // --------------------------------------------------------------------- //
     // NORMALIZE 
     // --------------------------------------------------------------------- //
-    /// Normalizes the light such that the overall power (ie, lumen) and
-    /// luminous intensity (ie, candela) of the light remain constant while
-    /// altering the size of the light. It does so by scaling the luminance (ie,
-    /// nits) by a factor inversely proportional to the size.
+    /// Normalizes the light such that the power of the light remains constant
+    /// while altering the size of the light, by scaling the brightness by a
+    /// factor inversely proportional to the size.
     ///
     /// This makes it easier to independently adjust the power and shape
     /// of the light, by causing the total illumination provided by a light to
@@ -429,38 +428,14 @@ public:
     /// divided by a factor representing the "size" of the light:
     ///
     /// ```
-    /// LeScalar = LeScalar / sizeFactor;
+    /// LScalar = LScalar / sizeFactor;
     /// ```
     ///
     /// ...where `sizeFactor` = 1 if `normalize` is off, and is calculated
     /// depending on the type of the light as described below if `normalize` is
     /// on.
     ///
-    /// For an area light, the `sizeFactor` is the surface area (in world
-    /// space) of the shape of the light, including any scaling applied to the
-    /// light by its transform stack.
-    ///
-    /// ```
-    /// if (IsAreaLight(light)) {
-    ///     sizeFactor = CalcWorldSpaceSurfaceArea(light);
-    /// }
-    /// ```
-    ///
-    /// For a distant light with `angle` = 0, this attribute is ignored.
-    /// For a distant light with non-zero `angle` attribute, it is the
-    /// proportion of the visible hemisphere subtended by the light, that is:
-    ///
-    /// ```
-    /// if (IsDistantLight(light)) {
-    ///     if (angle == 0) {
-    ///         sizeFactor = 1
-    ///     } else {
-    ///         const float theta = (angle / 2) * M_PI / 180;
-    ///         sizeFactor = sinf(theta) * sinf(theta) * 2 * M_PI;
-    ///     }
-    /// }
-    /// ```
-    ///
+    /// **DomeLight / PortalLight:**
     /// For a dome light, this attribute is ignored:
     ///
     /// ```
@@ -469,11 +444,63 @@ public:
     /// }
     /// ```
     ///
-    /// | ||
-    /// | -- | -- |
-    /// | Declaration | `bool inputs:normalize = 0` |
-    /// | C++ Type | bool |
-    /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Bool |
+    /// **AreaLight:**
+    /// For an area light, the `sizeFactor` is the surface area (in world
+    /// space) of the shape of the light, including any scaling applied to the
+    /// light by its transform stack. This includes any boundable light type
+    /// which can have a calculable surface area, such as:
+    ///
+    /// - MeshLightAPI
+    /// - DiskLight
+    /// - RectLight
+    /// - SphereLight
+    /// - CylinderLight
+    ///
+    /// ```
+    /// if (IsAreaLight(light)) {
+    ///     sizeFactor = CalcWorldSpaceSurfaceArea(light);
+    /// }
+    /// ```
+    ///
+    /// **DistantLight:**
+    /// For distant lights, we use the following formula:
+    ///
+    /// ```
+    /// if (IsDistantLight(light)) {
+    ///     const float theta_max = (angle / 2) * M_PI / 180;
+    ///     if (theta_max == 0) {
+    ///         sizeFactor = 1
+    ///     } else if (theta_max <= M_PI / 2) {
+    ///         sizeFactor = sinf(theta_max) * sinf(theta_max) * M_PI;
+    ///     } else if (theta_max <= M_PI) {
+    ///         sizeFactor = (2 - sinf(theta_max) * sinf(theta_max)) * M_PI;
+    ///     }
+    /// }
+    /// ```
+    ///
+    /// This formula is used because it satisfies the following two properties:
+    ///
+    /// 1. When normalize is enabled, the received illuminance from this light
+    ///    on a surface normal to the light's primary direction is held constant
+    ///    when angle changes, and the "intensity" property becomes a measure of
+    ///    the illuminance, expressed in lux, for a light with 0 exposure.
+    /// 2. If we assume that our distant light is an approximation for a "very
+    ///    far" sphere light (like the sun), then (for `0 < theta_max <= pi/2`)
+    ///    this definition agrees with the definition used for area lights - ie,
+    ///    the total power of this distant sphere light is constant when the
+    ///    "size" (ie, angle) changes, and our sizeFactor is proportional to the
+    ///    total surface area of this sphere.
+    ///
+    /// ### Derivation of the formula for distant lights
+    ///
+    /// For a detailed discussion of the derivation of the above formula, and
+    /// demonstration that it satisfies the two properties, see:
+    ///
+    /// - [Normalizing Distant Lights - In Depth](@ref normdist)
+    ///
+    /// | || | -- | -- | | Declaration | `bool inputs:normalize = 0` | | C++
+    /// Type | bool | | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Bool
+    /// |
     USDLUX_API
     UsdAttribute GetNormalizeAttr() const;
 
@@ -496,7 +523,7 @@ public:
     /// the limit of numerical accuracy under the rendering illuminant.
     ///
     /// ```
-    /// Le = GfCompMult(color, LeScalar);
+    /// LColor = GfCompMult(color, LScalar);
     /// ```
     ///
     /// | ||

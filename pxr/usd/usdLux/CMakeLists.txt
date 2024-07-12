@@ -81,6 +81,8 @@ pxr_library(usdLux
 
     DOXYGEN_FILES
         overview.dox
+        doxygen/normalizingDistantLights.md
+        doxygen/images/Sphere-Radius-Angle-Subtended-Diagram.svg
 )
 
 pxr_test_scripts(

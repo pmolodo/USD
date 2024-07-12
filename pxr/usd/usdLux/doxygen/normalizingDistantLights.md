@@ -145,38 +145,6 @@ between a local point $\bold{P}$ and the center of our distant sphere,
 $\bold{C}$, we can effectively ignore the local coordinates $\vec{P}_{Local}$,
 and assume the direction is constant.
 
--   More formally - our point $\bold{P}$ is in a coordinate system
-    $Local$, with an origin $\bold{O}_{Local}$, and generally expressed as
-    $\vec{P}_{Local}$:
-
-    $$
-        \bold{P} = \bold{O}_{Local} + \vec{P}_{Local}
-    $$
-
-    Now, we say that our distant sphere light has it's center located at point
-    $\bold{C}$, which, in our $Local$ space, is:
-
-    $$
-        \vec{C}_{Local} = -D * \vec{n}_{Local}
-    $$
-
-    ...where $\vec{n}_{Local}$ is the primary emission axis of our light. So $\vec{PC}$, the vector from our local
-    point $\bold{P}$ to our distant sphere's center $\bold{C}$, is:
-
-    $$
-        \vec{PC} = \vec{P}_{Local} + D * \vec{n}_{Local}
-    $$
-
-    Now, we assume that our sphere is so far away that $D$ is *MUCH* larger than
-    $\vec{P}_{Local}$, so:
-
-    $$
-        D >> ||\vec{P}_{Local}|| \implies \vec{PC}_{Local} \approx D * \vec{n}_{Local}
-    $$
-
-    ...ie, for all $\vec{P}_{Local}$ we are likely to calculate, the direction to
-    the light is effectively constant for computational purposes.
-
 However, if we assume when we change $\theta_{max}$ what we are "really" doing
 is scaling up the radius $r$ of our sphere while keeping it's center in the
 same position, we can apply the above equation.  In our distant light case,

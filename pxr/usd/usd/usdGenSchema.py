@@ -117,6 +117,9 @@ USERDOC_FULL = "userDoc"
 # Parsed Objects                                                               #
 #------------------------------------------------------------------------------#
 
+_writeLineSep = None
+
+
 def _SanitizeDoc(doc, leader):
     """Cleanup the doc string in several ways:
       * Convert None to empty string
@@ -1060,7 +1063,7 @@ def _WriteFile(filePath, content, validate):
 
     # Otherwise attempt to write to file.
     try:
-        with open(filePath, 'w') as curfile:
+        with open(filePath, 'w', newline=_writeLineSep) as curfile:
             curfile.write(content)
             Print('\t    wrote %s' % filePath)
     except IOError as ioe:
@@ -1827,6 +1830,15 @@ if __name__ == '__main__':
         default='.',
         help='The target directory where the code should be generated. '
         '[Default: %(default)s]')
+    parser.add_argument('--newline',
+        choices=('linux', 'windows', 'os'),
+        default='os',
+        help='How to handle newlines when writing files. If "linux" or '
+             '"windows", then files are always written out with "\\n" or '
+             '"\\r\\n", respectively. If "os" (the default), then files are '
+             'written using python universal newline handling, which means '
+             'they are translated to os.linesep. Note that files are always '
+             'READ using universal newlines.')
     parser.add_argument('-v', '--validate',
         action='store_true',
         help='Verify that the source files are unchanged.')
@@ -1891,6 +1903,12 @@ if __name__ == '__main__':
         namespaceUsing = 'PXR_NAMESPACE_USING_DIRECTIVE'
 
     Print.SetQuiet(args.quiet)
+
+    _writeLineSep = {
+        'linux': '\n',
+        'windows': '\r\n',
+        'os': None,
+    }[args.newline]
 
     #
     # Error Checking

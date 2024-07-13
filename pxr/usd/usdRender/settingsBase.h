@@ -36,7 +36,7 @@ class SdfAssetPath;
 /// \class UsdRenderSettingsBase
 ///
 /// Abstract base class that defines render settings that
-/// can be specified on either a RenderSettings prim or a RenderProduct 
+/// can be specified on either a RenderSettings prim or a RenderProduct
 /// prim.
 ///
 /// For any described attribute \em Fallback \em Value or \em Allowed \em Values below
@@ -167,28 +167,28 @@ public:
     // --------------------------------------------------------------------- //
     /// Indicates the policy to use to resolve an aspect
     /// ratio mismatch between the camera aperture and image settings.
-    /// 
+    ///
     /// This policy allows a standard render setting to do something
     /// reasonable given varying camera inputs.
-    /// 
+    ///
     /// The camera aperture aspect ratio is determined by the
     /// aperture atributes on the UsdGeomCamera.
-    /// 
+    ///
     /// The image aspect ratio is determined by the resolution and
     /// pixelAspectRatio attributes in the render settings.
-    /// 
+    ///
     /// - "expandAperture": if necessary, expand the aperture to
-    /// fit the image, exposing additional scene content
+    ///   fit the image, exposing additional scene content
     /// - "cropAperture": if necessary, crop the aperture to fit
-    /// the image, cropping scene content
+    ///   the image, cropping scene content
     /// - "adjustApertureWidth": if necessary, adjust aperture width
-    /// to make its aspect ratio match the image
+    ///   to make its aspect ratio match the image
     /// - "adjustApertureHeight": if necessary, adjust aperture height
-    /// to make its aspect ratio match the image
+    ///   to make its aspect ratio match the image
     /// - "adjustPixelAspectRatio": compute pixelAspectRatio to
-    /// make the image exactly cover the aperture; disregards
-    /// existing attribute value of pixelAspectRatio
-    /// 
+    ///   make the image exactly cover the aperture; disregards
+    ///   existing attribute value of pixelAspectRatio
+    ///
     ///
     /// | ||
     /// | -- | -- |
@@ -215,21 +215,21 @@ public:
     /// dataWindowNDC specifies the axis-aligned rectangular
     /// region in the adjusted aperture window within which the renderer
     /// should produce data.
-    /// 
+    ///
     /// It is specified as (xmin, ymin, xmax, ymax) in normalized
     /// device coordinates, where the range 0 to 1 corresponds to the
     /// aperture.  (0,0) corresponds to the bottom-left
     /// corner and (1,1) corresponds to the upper-right corner.
-    /// 
+    ///
     /// Specifying a window outside the unit square will produce
     /// overscan data. Specifying a window that does not cover the unit
     /// square will produce a cropped render.
-    /// 
+    ///
     /// A pixel is included in the rendered result if the pixel
     /// center is contained by the data window.  This is consistent
     /// with standard rules used by polygon rasterization engines.
     /// \ref UsdRenderRasterization
-    /// 
+    ///
     /// The data window is expressed in NDC so that cropping and
     /// overscan may be resolution independent.  In interactive
     /// workflows, incremental cropping and resolution adjustment
@@ -237,11 +237,11 @@ public:
     /// In compositing workflows, overscan may be used to support
     /// image post-processing kernels, and reduced-resolution proxy
     /// renders may be used for faster iteration.
-    /// 
+    ///
     /// The dataWindow:ndc coordinate system references the
     /// aperture after any adjustments required by
     /// aspectRatioConformPolicy.
-    /// 
+    ///
     ///
     /// | ||
     /// | -- | -- |

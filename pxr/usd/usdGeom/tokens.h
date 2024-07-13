@@ -291,7 +291,7 @@ struct UsdGeomTokensType {
     const TfToken interpolateBoundary;
     /// \brief "interpolation"
     /// 
-    /// UsdGeomPrimvar - How a Primvar interpolates across a primitive; equivalent to RenderMan's \ref Usd_InterpolationVals "class specifier" 
+    /// UsdGeomPrimvar - How a Primvar interpolates across a primitive; equivalent to RenderMan's \ref Usd_InterpolationVals "class specifier"
     const TfToken interpolation;
     /// \brief "invisible"
     /// 
@@ -447,7 +447,7 @@ struct UsdGeomTokensType {
     const TfToken pinned;
     /// \brief "pivot"
     /// 
-    /// Op suffix for the standard scale-rotate pivot on a UsdGeomXformCommonAPI-compatible prim. 
+    /// Op suffix for the standard scale-rotate pivot on a UsdGeomXformCommonAPI-compatible prim.
     const TfToken pivot;
     /// \brief "point"
     /// 

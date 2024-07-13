@@ -199,7 +199,7 @@ struct UsdRenderTokensType {
     const TfToken renderSource;
     /// \brief "renderVisibility"
     /// 
-    ///  This token represents the collection name to use with UsdCollectionAPI to represent renderVisibility of a RenderPass prim. 
+    ///  This token represents the collection name to use with UsdCollectionAPI to represent renderVisibility of a RenderPass prim.
     const TfToken renderVisibility;
     /// \brief "resolution"
     /// 

@@ -39,7 +39,7 @@ class SdfAssetPath;
 /// This API extends and configures the core UsdProcGenerativeProcedural schema
 /// defined within usdProc for use with hydra generative procedurals as defined
 /// within hdGp.
-/// 
+///
 ///
 /// For any described attribute \em Fallback \em Value or \em Allowed \em Values below
 /// that are text/tokens, the actual token is published and defined in \ref UsdHydraTokens.
@@ -188,7 +188,7 @@ public:
     /// the equivalent default of HdGpGenerativeProceduralResolvingSceneIndex.
     /// Multiple instances of the scene index can be used to determine where
     /// within a scene index chain a given procedural will be evaluated.
-    /// 
+    ///
     ///
     /// | ||
     /// | -- | -- |

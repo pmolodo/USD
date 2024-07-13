@@ -47,11 +47,11 @@ struct UsdShadeTokensType {
     USDSHADE_API UsdShadeTokensType();
     /// \brief ""
     /// 
-    /// Possible value for the 'materialPurpose' parameter in the various methods available in UsdShadeMaterialBindingAPI. Its value is empty and its purpose is to represent a general  purpose material-binding that applies in the absence of a  specific-purpose binding. 
+    /// Possible value for the 'materialPurpose' parameter in the various methods available in UsdShadeMaterialBindingAPI. Its value is empty and its purpose is to represent a general  purpose material-binding that applies in the absence of a  specific-purpose binding.
     const TfToken allPurpose;
     /// \brief "bindMaterialAs"
     /// 
-    /// Token valued metadata key authored on a material  binding relationship to indicate the strength of the binding  relative to bindings authored on descendants. 
+    /// Token valued metadata key authored on a material  binding relationship to indicate the strength of the binding  relative to bindings authored on descendants.
     const TfToken bindMaterialAs;
     /// \brief "coordSys"
     /// 
@@ -63,7 +63,7 @@ struct UsdShadeTokensType {
     const TfToken coordSys_MultipleApplyTemplate_Binding;
     /// \brief "displacement"
     /// 
-    /// Describes the <i>displacement</i> output  terminal on a UsdShadeMaterial. It is used to define the  terminal UsdShadeShader describing the displacement of a  UsdShadeMaterial. 
+    /// Describes the <i>displacement</i> output  terminal on a UsdShadeMaterial. It is used to define the  terminal UsdShadeShader describing the displacement of a  UsdShadeMaterial.
     const TfToken displacement;
     /// \brief "fallbackStrength"
     /// 
@@ -71,7 +71,7 @@ struct UsdShadeTokensType {
     const TfToken fallbackStrength;
     /// \brief "full"
     /// 
-    /// Possible value for the 'materialPurpose' parameter in UsdShadeMaterialBindingAPI, to be used when the purpose of the render is entirely about visualizing the truest representation of a scene, considering all lighting and material information, at highest fidelity. , Possible value for 'connectability' metadata on a UsdShadeInput. When connectability of an input is set to "full", it implies that it can be connected to any input or output. 
+    /// Possible value for the 'materialPurpose' parameter in UsdShadeMaterialBindingAPI, to be used when the purpose of the render is entirely about visualizing the truest representation of a scene, considering all lighting and material information, at highest fidelity., Possible value for 'connectability' metadata on a UsdShadeInput. When connectability of an input is set to "full", it implies that it can be connected to any input or output.
     const TfToken full;
     /// \brief "id"
     /// 
@@ -87,31 +87,31 @@ struct UsdShadeTokensType {
     const TfToken infoImplementationSource;
     /// \brief "inputs:"
     /// 
-    /// The prefix on shading attributes denoting an input. 
+    /// The prefix on shading attributes denoting an input.
     const TfToken inputs;
     /// \brief "interfaceOnly"
     /// 
-    /// Possible value for 'connectability' metadata on  a UsdShadeInput. It implies that the input can only connect to  a NodeGraph Input (which represents an interface override, not  a render-time dataflow connection), or another Input whose  connectability is also 'interfaceOnly'. 
+    /// Possible value for 'connectability' metadata on  a UsdShadeInput. It implies that the input can only connect to  a NodeGraph Input (which represents an interface override, not  a render-time dataflow connection), or another Input whose  connectability is also 'interfaceOnly'.
     const TfToken interfaceOnly;
     /// \brief "materialBind"
     /// 
-    /// The name of the GeomSubset family used to  identify face subsets defined for the purpose of binding  materials to facesets. 
+    /// The name of the GeomSubset family used to  identify face subsets defined for the purpose of binding  materials to facesets.
     const TfToken materialBind;
     /// \brief "material:binding"
     /// 
-    ///  The relationship name on non-shading prims to denote a binding to a UsdShadeMaterial. 
+    ///  The relationship name on non-shading prims to denote a binding to a UsdShadeMaterial.
     const TfToken materialBinding;
     /// \brief "material:binding:collection"
     /// 
-    ///  The relationship name on non-shading prims to denote a collection-based binding to a UsdShadeMaterial. 
+    ///  The relationship name on non-shading prims to denote a collection-based binding to a UsdShadeMaterial.
     const TfToken materialBindingCollection;
     /// \brief "materialVariant"
     /// 
-    /// The variant name of material variation described on a UsdShadeMaterial. 
+    /// The variant name of material variation described on a UsdShadeMaterial.
     const TfToken materialVariant;
     /// \brief "outputs:"
     /// 
-    /// The prefix on shading attributes denoting an output. 
+    /// The prefix on shading attributes denoting an output.
     const TfToken outputs;
     /// \brief "outputs:displacement"
     /// 
@@ -127,11 +127,11 @@ struct UsdShadeTokensType {
     const TfToken outputsVolume;
     /// \brief "preview"
     /// 
-    /// Possible value for the 'materialPurpose'  parameter in UsdShadeMaterialBindingAPI, to be used when the  render is in service of a goal other than a high fidelity "full" render (such as scene manipulation, modeling, or realtime  playback). Latency and speed are generally of greater concern  for preview renders, therefore preview materials are generally  designed to be "lighterweight" compared to full materials. 
+    /// Possible value for the 'materialPurpose'  parameter in UsdShadeMaterialBindingAPI, to be used when the  render is in service of a goal other than a high fidelity "full" render (such as scene manipulation, modeling, or realtime  playback). Latency and speed are generally of greater concern  for preview renders, therefore preview materials are generally  designed to be "lighterweight" compared to full materials.
     const TfToken preview;
     /// \brief "sdrMetadata"
     /// 
-    /// Dictionary valued metadata key authored on Shader prims with implementationSource value of sourceAsset or  sourceCode to pass along metadata to the shader parser or  compiler. It is also used to author metadata on shader  properties in a UsdShade-based shader definition file. 
+    /// Dictionary valued metadata key authored on Shader prims with implementationSource value of sourceAsset or  sourceCode to pass along metadata to the shader parser or  compiler. It is also used to author metadata on shader  properties in a UsdShade-based shader definition file.
     const TfToken sdrMetadata;
     /// \brief "sourceAsset"
     /// 
@@ -147,23 +147,23 @@ struct UsdShadeTokensType {
     const TfToken strongerThanDescendants;
     /// \brief "subIdentifier"
     /// 
-    /// This identifier is used in conjunction with a specific source asset to indicate a particular definition within the source asset, if the source asset specifies more than one shader node definition. 
+    /// This identifier is used in conjunction with a specific source asset to indicate a particular definition within the source asset, if the source asset specifies more than one shader node definition.
     const TfToken subIdentifier;
     /// \brief "surface"
     /// 
-    /// Describes the <i>surface</i> output  terminal on a UsdShadeMaterial. It is used to define the  terminal UsdShadeShader describing the surface of a  UsdShadeMaterial. 
+    /// Describes the <i>surface</i> output  terminal on a UsdShadeMaterial. It is used to define the  terminal UsdShadeShader describing the surface of a  UsdShadeMaterial.
     const TfToken surface;
     /// \brief ""
     /// 
-    /// Possible value for the "renderContext" parameter in \ref UsdShadeMaterial_Outputs API. Represents the universal renderContext. An output with a universal renderContext is  applicable to all possible rendering contexts. 
+    /// Possible value for the "renderContext" parameter in \ref UsdShadeMaterial_Outputs API. Represents the universal renderContext. An output with a universal renderContext is  applicable to all possible rendering contexts.
     const TfToken universalRenderContext;
     /// \brief ""
     /// 
-    /// Possible value for the "sourceType" parameter  in \ref UsdShadeNodeDefAPI_ImplementationSource API. Represents  the universal or fallback source type. 
+    /// Possible value for the "sourceType" parameter  in \ref UsdShadeNodeDefAPI_ImplementationSource API. Represents  the universal or fallback source type.
     const TfToken universalSourceType;
     /// \brief "volume"
     /// 
-    /// Describes the <i>volume</i> output  terminal on a UsdShadeMaterial. It is used to define the  terminal UsdShadeShader describing the volume of a  UsdShadeMaterial. 
+    /// Describes the <i>volume</i> output  terminal on a UsdShadeMaterial. It is used to define the  terminal UsdShadeShader describing the volume of a  UsdShadeMaterial.
     const TfToken volume;
     /// \brief "weakerThanDescendants"
     /// 

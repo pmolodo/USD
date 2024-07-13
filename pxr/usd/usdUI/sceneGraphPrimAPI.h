@@ -37,7 +37,7 @@ class SdfAssetPath;
 ///
 /// 
 /// Utility schema for display properties of a prim
-/// 
+///
 ///
 /// For any described attribute \em Fallback \em Value or \em Allowed \em Values below
 /// that are text/tokens, the actual token is published and defined in \ref UsdUITokens.
@@ -158,7 +158,7 @@ public:
     // --------------------------------------------------------------------- //
     /// When publishing a nodegraph or a material, it can be useful to
     /// provide an optional display name, for readability.
-    /// 
+    ///
     ///
     /// | ||
     /// | -- | -- |
@@ -182,10 +182,10 @@ public:
     // DISPLAYGROUP 
     // --------------------------------------------------------------------- //
     /// When publishing a nodegraph or a material, it can be useful to
-    /// provide an optional display group, for organizational purposes and 
+    /// provide an optional display group, for organizational purposes and
     /// readability. This is because often the usd shading hierarchy is rather
     /// flat while we want to display it in organized groups.
-    /// 
+    ///
     ///
     /// | ||
     /// | -- | -- |

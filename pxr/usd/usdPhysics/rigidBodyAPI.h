@@ -40,7 +40,7 @@ class SdfAssetPath;
 ///
 /// Applies physics body attributes to any UsdGeomXformable prim and
 /// marks that prim to be driven by a simulation. If a simulation is running
-/// it will update this prim's pose. All prims in the hierarchy below this 
+/// it will update this prim's pose. All prims in the hierarchy below this
 /// prim should move accordingly.
 ///
 class UsdPhysicsRigidBodyAPI : public UsdAPISchemaBase
@@ -177,8 +177,8 @@ public:
     // --------------------------------------------------------------------- //
     // KINEMATICENABLED 
     // --------------------------------------------------------------------- //
-    /// Determines whether the body is kinematic or not. A kinematic 
-    /// body is a body that is moved through animated poses or through 
+    /// Determines whether the body is kinematic or not. A kinematic
+    /// body is a body that is moved through animated poses or through
     /// user defined poses. The simulation derives velocities for the
     /// kinematic body based on the external motion. When a continuous motion
     /// is not desired, this kinematic flag should be set to false.
@@ -226,7 +226,7 @@ public:
     // --------------------------------------------------------------------- //
     // VELOCITY 
     // --------------------------------------------------------------------- //
-    /// Linear velocity in the same space as the node's xform. 
+    /// Linear velocity in the same space as the node's xform.
     /// Units: distance/second.
     ///
     /// | ||
@@ -249,7 +249,7 @@ public:
     // --------------------------------------------------------------------- //
     // ANGULARVELOCITY 
     // --------------------------------------------------------------------- //
-    /// Angular velocity in the same space as the node's xform. 
+    /// Angular velocity in the same space as the node's xform.
     /// Units: degrees/second.
     ///
     /// | ||
@@ -272,8 +272,8 @@ public:
     // --------------------------------------------------------------------- //
     // SIMULATIONOWNER 
     // --------------------------------------------------------------------- //
-    /// Single PhysicsScene that will simulate this body. By 
-    /// default this is the first PhysicsScene found in the stage using 
+    /// Single PhysicsScene that will simulate this body. By
+    /// default this is the first PhysicsScene found in the stage using
     /// UsdStage::Traverse().
     ///
     USDPHYSICS_API

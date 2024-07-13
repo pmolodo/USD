@@ -51,7 +51,7 @@ struct UsdRiTokensType {
     const TfToken bspline;
     /// \brief "cameraVisibility"
     /// 
-    ///  UsdRenderPassAPI - This token represents the collection  name to use with UsdCollectionAPI to set the camera visibility attribute on the prims in the collection for the RenderPass. 
+    ///  UsdRenderPassAPI - This token represents the collection  name to use with UsdCollectionAPI to set the camera visibility attribute on the prims in the collection for the RenderPass.
     const TfToken cameraVisibility;
     /// \brief "catmull-rom"
     /// 
@@ -75,7 +75,7 @@ struct UsdRiTokensType {
     const TfToken linear;
     /// \brief "matte"
     /// 
-    ///  UsdRenderPassAPI - This token represents the collection  name to use with UsdCollectionAPI to set the matte attribute on the prims in the collection for the RenderPass. 
+    ///  UsdRenderPassAPI - This token represents the collection  name to use with UsdCollectionAPI to set the matte attribute on the prims in the collection for the RenderPass.
     const TfToken matte;
     /// \brief "outputs:ri:displacement"
     /// 

@@ -44,7 +44,7 @@ class SdfAssetPath;
 /// retaining their consistency with the RenderMan specification for
 /// NURBS Patches. HermiteCurves are useful for the
 /// interchange of animation guides and paths.
-/// 
+///
 /// It is safe to use the length of the curve vertex count to derive
 /// the number of curves and the number and layout of curve vertices,
 /// but this schema should NOT be used to derive the number of curve
@@ -53,7 +53,7 @@ class SdfAssetPath;
 /// internal or future shipped schemas will follow this pattern. Be
 /// sure to key any indexing behavior off the concrete type, not this
 /// abstract type.
-/// 
+///
 ///
 class UsdGeomCurves : public UsdGeomPointBased
 {

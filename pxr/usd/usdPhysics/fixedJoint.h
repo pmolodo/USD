@@ -34,7 +34,7 @@ class SdfAssetPath;
 
 /// \class UsdPhysicsFixedJoint
 ///
-/// Predefined fixed joint type (All degrees of freedom are 
+/// Predefined fixed joint type (All degrees of freedom are
 /// removed.)
 ///
 class UsdPhysicsFixedJoint : public UsdPhysicsJoint

@@ -35,7 +35,7 @@ class SdfAssetPath;
 
 /// \class UsdSchemaExamplesSimple
 ///
-/// An example of an untyped schema prim. Note that it does not 
+/// An example of an untyped schema prim. Note that it does not
 /// specify a typeName
 ///
 class UsdSchemaExamplesSimple : public UsdTyped

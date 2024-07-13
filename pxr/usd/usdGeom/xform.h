@@ -34,7 +34,7 @@ class SdfAssetPath;
 
 /// \class UsdGeomXform
 ///
-/// Concrete prim schema for a transform, which implements Xformable 
+/// Concrete prim schema for a transform, which implements Xformable
 ///
 class UsdGeomXform : public UsdGeomXformable
 {

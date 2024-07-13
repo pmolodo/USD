@@ -214,15 +214,15 @@ class "AssetPreviewsAPI" (
     Asset Previews are encoded as part of a prim's `assetInfo` metadata.  A 
     default thumbnail image would look like:
     ```
-1.    assetInfo = {
-2.      dictionary previews = {
-3.          dictionary thumbnails = {
-4.              dictionary default = {
-5.                  asset defaultImage = @chair_thumb.jpg@
-6.              }
-7.          }
-8.      }
-9.    }
+    1.    assetInfo = {
+    2.      dictionary previews = {
+    3.          dictionary thumbnails = {
+    4.              dictionary default = {
+    5.                  asset defaultImage = @chair_thumb.jpg@
+    6.              }
+    7.          }
+    8.      }
+    9.    }
     ```
 
     """

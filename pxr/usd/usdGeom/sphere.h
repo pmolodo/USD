@@ -36,7 +36,7 @@ class SdfAssetPath;
 /// \class UsdGeomSphere
 ///
 /// Defines a primitive sphere centered at the origin.
-/// 
+///
 /// The fallback values for Cube, Sphere, Cone, and Cylinder are set so that
 /// they all pack into the same volume/bounds.
 ///
@@ -140,7 +140,7 @@ public:
     // --------------------------------------------------------------------- //
     /// Indicates the sphere's radius.  If you
     /// author \em radius you must also author \em extent.
-    /// 
+    ///
     /// \sa GetExtentAttr()
     ///
     /// | ||

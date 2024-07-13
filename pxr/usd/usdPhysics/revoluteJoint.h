@@ -165,7 +165,7 @@ public:
     // --------------------------------------------------------------------- //
     // LOWERLIMIT 
     // --------------------------------------------------------------------- //
-    /// Lower limit. Units: degrees. -inf means not limited in 
+    /// Lower limit. Units: degrees. -inf means not limited in
     /// negative direction.
     ///
     /// | ||
@@ -188,7 +188,7 @@ public:
     // --------------------------------------------------------------------- //
     // UPPERLIMIT 
     // --------------------------------------------------------------------- //
-    /// Upper limit. Units: degrees. inf means not limited in 
+    /// Upper limit. Units: degrees. inf means not limited in
     /// positive direction.
     ///
     /// | ||

@@ -27,6 +27,8 @@ from __future__ import print_function
 import dataclasses
 import sys, os, re, inspect
 import keyword
+import textwrap
+import traceback
 from argparse import ArgumentParser
 from collections import namedtuple
 
@@ -116,6 +118,49 @@ USERDOC_FULL = "userDoc"
 # Parsed Objects                                                               #
 #------------------------------------------------------------------------------#
 
+def _GetUsdRoot():
+    """Try to determine the usd root from the location of this file."""
+    if not __file__ or not os.path.isfile(__file__):
+        # default to "."
+        return "."
+
+    # if we have the path to this file, it's likely either in an installed
+    # location (USD_ROOT/bin), or in a source folder (USD_ROOT/pxr/usd/usd)
+    # root. Rather than hardcoding those locations, though, we search up our
+    # directory tree until we find either a "bin" dir (which means we're in
+    # an installed location) or a "build_scripts" dir (which means we're in a
+    # source location)
+
+    last_dir = ""
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    while current_dir and current_dir != last_dir:
+        # if this IS the bin dir, we're done!
+        if os.path.basename(current_dir) == "bin":
+            return os.path.dirname(current_dir)
+
+        # otherwise, if this dir contains a bin or build_scripts dir, we're
+        # done.
+        for entry in os.scandir(current_dir):
+            if entry.is_dir() and entry.name in ("bin", "build_scripts"):
+                return current_dir
+
+        # no lucky, try parent
+        last_dir = current_dir
+        current_dir = os.path.dirname(last_dir)
+
+    # no luck, default to "."
+    return "."
+
+
+DEFAULT_SCHEMA_ROOT_PATH = _GetUsdRoot()
+DEFAULT_SCHEMA_FILE = "./schema.usda"
+
+_writeLineSep = None
+
+TRAILING_WHITESPACE_RE = re.compile(r"\s+$", re.MULTILINE)
+useSmartWhitespace = False
+
+
 def _SanitizeDoc(doc, leader):
     """Cleanup the doc string in several ways:
       * Convert None to empty string
@@ -124,7 +169,49 @@ def _SanitizeDoc(doc, leader):
     """
     if doc is None:
         return ''
-    
+
+    if useSmartWhitespace:
+        # the documentation is often specified in lines like this:
+        #
+        #     doc = """blah blah
+        #         more stuff blab blab blab
+        #         yet another line here"""
+        #
+        # ...and so often has extra unnecessary leading whitespace.
+        # However, in some cases leading whitespace may be intentional, ie:
+        #
+        #     doc = """blah blah
+        #         Here's some python code:
+        #
+        #         ```
+        #         if(condition):
+        #             doStuff()
+        #         ```
+        #         """
+        #
+        # Try to distinguish between the two cases by finding the "common"
+        # leading whitespace for all non-empty lines other than the first.
+
+        if "\n" in doc:
+            first, rest = doc.split("\n", 1)
+        else:
+            first, rest = doc, None
+
+        first = first.lstrip()
+
+        if rest is None:
+            lines = [first]
+        else:
+            # make use of textwrap.dedent to strip common whitespace from lines
+            # other than the first
+            rest = textwrap.dedent(rest)
+            lines = [first] + rest.split("\n")
+        joined = leader.join(lines)
+
+        # finally, strip trailing whitespace - to deal with leaders that
+        # include training whitespace, like '\n    /// ' when used to join
+        # empty lines.
+        return TRAILING_WHITESPACE_RE.sub("", joined)
     return leader.join([line.lstrip() for line in doc.split('\n')])
 
 
@@ -1059,7 +1146,7 @@ def _WriteFile(filePath, content, validate):
 
     # Otherwise attempt to write to file.
     try:
-        with open(filePath, 'w') as curfile:
+        with open(filePath, 'w', newline=_writeLineSep) as curfile:
             curfile.write(content)
             Print('\t    wrote %s' % filePath)
     except IOError as ioe:
@@ -1808,6 +1895,93 @@ def InitializeResolver():
     # across runs.
     Ar.DefaultResolver.SetDefaultSearchPath(sorted(list(resourcePaths)))
 
+def genSchemaRecurse(rootDir: str, args):
+    rootDir = os.path.abspath(rootDir)
+    if args.ignore:
+        ignore = re.compile(args.ignore)
+    else:
+        ignore = None
+    foundSchemas = []
+    for (dirpath, dirnames, filenames) in os.walk(rootDir):
+        if "schema.usda" in filenames:
+            foundSchemas.append(os.path.join(dirpath, "schema.usda"))
+        if ignore is not None:
+            toRemove = []
+            for i, dirname in enumerate(dirnames):
+                testDirpath = os.path.join(dirpath, dirname)
+                relTestDirpath = os.path.relpath(testDirpath, rootDir)
+                if ignore.search(relTestDirpath):
+                    toRemove.append(i)
+            for i in reversed(toRemove):
+                del dirnames[i]
+    if not foundSchemas:
+        Print.Err(f"Found no schema.usda files underneath root: {rootDir}")
+        return
+
+    num_found = len(foundSchemas)
+    Print(f"Found {num_found} schema.usda files")
+    for i, path in enumerate(foundSchemas):
+        Print("")
+        Print(f"Generating schema {i + 1} / {num_found}: {path}")
+        genSchema(path, os.path.dirname(path), args)
+
+
+def genSchema(schemaPath: str, codeGenPath: str, args):
+    #
+    # Gather Schema Class information
+    #
+    libName, \
+    libPath, \
+    libPrefix, \
+    tokensPrefix, \
+    useExportAPI, \
+    libTokens, \
+    skipCodeGen, \
+    classes = ParseUsd(schemaPath)
+
+    if args.validate:
+        Print('Validation on, any diffs found will cause failure.')
+
+    Print('Processing schema classes:')
+    Print(', '.join(map(lambda self: self.usdPrimTypeName, classes)))
+
+    #
+    # Generate Code from Templates
+    #
+    if not os.path.isdir(codeGenPath):
+        os.makedirs(codeGenPath)
+
+    j2_env = Environment(loader=FileSystemLoader(templatePath),
+                            trim_blocks=True)
+    j2_env.globals.update(Camel=_CamelCase,
+                            Proper=_ProperCase,
+                            Upper=_UpperCase,
+                            Lower=_LowerCase,
+                            namespaceOpen=namespaceOpen,
+                            namespaceClose=namespaceClose,
+                            namespaceUsing=namespaceUsing,
+                            libraryName=libName,
+                            libraryPath=libPath,
+                            libraryPrefix=libPrefix,
+                            tokensPrefix=tokensPrefix,
+                            useExportAPI=useExportAPI)
+
+    # Generate code for schema libraries that aren't specified as codeless.
+    if not skipCodeGen:
+        # Gathered tokens are only used for code-full schemas.
+        tokenData = GatherTokens(classes, libName, libTokens,
+                                    includeSchemaIdentifierTokens=True)
+        GenerateCode(templatePath, codeGenPath, tokenData, classes, 
+                        args.validate,
+                        namespaceOpen, namespaceClose, namespaceUsing,
+                        useExportAPI, j2_env, args.headerTerminatorString)
+    # We always generate plugInfo and generateSchema.
+    GeneratePlugInfo(templatePath, codeGenPath, classes, args.validate,
+                        j2_env, skipCodeGen)
+    GenerateRegistry(codeGenPath, schemaPath, classes, 
+                        args.validate, j2_env)
+        
+
 if __name__ == '__main__':
     #
     # Parse Command-line
@@ -1817,21 +1991,59 @@ if __name__ == '__main__':
     parser.add_argument('schemaPath',
         nargs='?',
         type=str,
-        default='./schema.usda',
-        help='The source USD file where schema classes are defined. '
-        '[Default: %(default)s]')
+        default=None,
+        help='The source USD file where schema classes are defined '
+        f'[Default: {DEFAULT_SCHEMA_FILE}]; or, if --all option is used, the '
+        'base directory to search for  for schema.usda files [Default: '
+        f'{DEFAULT_SCHEMA_ROOT_PATH}]')
     parser.add_argument('codeGenPath',
         nargs='?',
         type=str,
         default='.',
-        help='The target directory where the code should be generated. '
-        '[Default: %(default)s]')
+        help='The target directory where the code should be generated '
+        '[Default: %(default)s]; ignored if --all option is used (schemas '
+        'are always generated into same directory they were found in)')
+    parser.add_argument('--all',
+        action='store_true',
+        help='Crawl the usd directory tree (or a custom directory, if '
+             'schemaPath is used) looking for schema.usda files, and '
+             'generating all found into their own directory')
+    parser.add_argument("-i", "--ignore",
+        default=r"(?:^|/|\\)testenv$",
+        help='Used with --all to filter directories to crawl. If given, should '
+             'be a regular expression that will be used via re.search.  Any '
+             'directory paths that match will not be recursed into. The match '
+             'is done against the directory path relative to the root search '
+             'director. [Default: %(default)s]')
+    whitespace_group = parser.add_mutually_exclusive_group()
+    whitespace_group.add_argument('--smart-whitespace',
+        action='store_true',
+        default=True,
+        help='Use a more intelligent method for striping whitespace from '
+             'docstrings, that attempts to preserve "intentional" leading '
+             'whitespace, and removes trailing whitespace')
+    whitespace_group.add_argument('--legacy-whitespace',
+        action='store_false',
+        dest="smart_whitespace",
+        help='Use older method for stripping whitespace')
+    parser.add_argument('--newline',
+        choices=('linux', 'windows', 'os'),
+        default='os',
+        help='How to handle newlines when writing files. If "linux" or '
+             '"windows", then files are always written out with "\\n" or '
+             '"\\r\\n", respectively. If "os" (the default), then files are '
+             'written using python universal newline handling, which means '
+             'they are translated to os.linesep. Note that files are always '
+             'READ using universal newlines.')
     parser.add_argument('-v', '--validate',
         action='store_true',
         help='Verify that the source files are unchanged.')
     parser.add_argument('-q', '--quiet',
         action='store_true',
         help='Do not output text during execution.')
+    parser.add_argument('--traceback',
+        action='store_true',
+        help='Print tracebacks on errors.')
     parser.add_argument('-n', '--namespace',
         nargs='+',
         type=str,
@@ -1866,6 +2078,11 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     codeGenPath = os.path.abspath(args.codeGenPath)
+    if args.schemaPath is None:
+        if args.all:
+            schemaPath = DEFAULT_SCHEMA_ROOT_PATH
+        else:
+            schemaPath = DEFAULT_SCHEMA_FILE
     schemaPath = os.path.abspath(args.schemaPath)
 
     if args.templatePath:
@@ -1886,15 +2103,28 @@ if __name__ == '__main__':
         namespaceClose = 'PXR_NAMESPACE_CLOSE_SCOPE'
         namespaceUsing = 'PXR_NAMESPACE_USING_DIRECTIVE'
 
+    useSmartWhitespace = args.smart_whitespace
     Print.SetQuiet(args.quiet)
+
+    _writeLineSep = {
+        'linux': '\n',
+        'windows': '\r\n',
+        'os': None,
+    }[args.newline]
 
     #
     # Error Checking
     #
-    if not os.path.isfile(schemaPath):
-        Print.Err('Usage Error: First positional argument must be a USD schema file.')
-        parser.print_help()
-        sys.exit(1)
+    if args.all:
+        if not os.path.isdir(schemaPath):
+            Print.Err('Usage Error: First positional argument must be a directory, when used with --all.')
+            parser.print_help()
+            sys.exit(1)
+    else:
+        if not os.path.isfile(schemaPath):
+            Print.Err('Usage Error: First positional argument must be a USD schema file, if not used with --all.')
+            parser.print_help()
+            sys.exit(1)
     if args.templatePath and not os.path.isdir(templatePath):
         Print.Err('Usage Error: templatePath argument must be the path to the codegenTemplates.')
         parser.print_help()
@@ -1905,61 +2135,14 @@ if __name__ == '__main__':
         # Initialize the asset resolver to resolve search paths
         #
         InitializeResolver()
-        
-        #
-        # Gather Schema Class information
-        #
-        libName, \
-        libPath, \
-        libPrefix, \
-        tokensPrefix, \
-        useExportAPI, \
-        libTokens, \
-        skipCodeGen, \
-        classes = ParseUsd(schemaPath)
 
-        if args.validate:
-            Print('Validation on, any diffs found will cause failure.')
+        if args.all:
+            genSchemaRecurse(schemaPath, args)
+        else:
+            genSchema(schemaPath, codeGenPath, args)
 
-        Print('Processing schema classes:')
-        Print(', '.join(map(lambda self: self.usdPrimTypeName, classes)))
-
-        #
-        # Generate Code from Templates
-        #
-        if not os.path.isdir(codeGenPath):
-            os.makedirs(codeGenPath)
-
-        j2_env = Environment(loader=FileSystemLoader(templatePath),
-                             trim_blocks=True)
-        j2_env.globals.update(Camel=_CamelCase,
-                              Proper=_ProperCase,
-                              Upper=_UpperCase,
-                              Lower=_LowerCase,
-                              namespaceOpen=namespaceOpen,
-                              namespaceClose=namespaceClose,
-                              namespaceUsing=namespaceUsing,
-                              libraryName=libName,
-                              libraryPath=libPath,
-                              libraryPrefix=libPrefix,
-                              tokensPrefix=tokensPrefix,
-                              useExportAPI=useExportAPI)
-
-        # Generate code for schema libraries that aren't specified as codeless.
-        if not skipCodeGen:
-            # Gathered tokens are only used for code-full schemas.
-            tokenData = GatherTokens(classes, libName, libTokens,
-                                     includeSchemaIdentifierTokens=True)
-            GenerateCode(templatePath, codeGenPath, tokenData, classes, 
-                         args.validate,
-                         namespaceOpen, namespaceClose, namespaceUsing,
-                         useExportAPI, j2_env, args.headerTerminatorString)
-        # We always generate plugInfo and generateSchema.
-        GeneratePlugInfo(templatePath, codeGenPath, classes, args.validate,
-                         j2_env, skipCodeGen)
-        GenerateRegistry(codeGenPath, schemaPath, classes, 
-                         args.validate, j2_env)
-    
     except Exception as e:
         Print.Err("ERROR:", str(e))
+        if args.traceback:
+            traceback.print_exc()
         sys.exit(1)

@@ -47,15 +47,15 @@ struct UsdTokensType {
     USD_API UsdTokensType();
     /// \brief "apiSchemas"
     /// 
-    ///  A listop metadata containing the API schemas which have been applied to this prim, using the Apply() method on the particular schema class.  
+    ///  A listop metadata containing the API schemas which have been applied to this prim, using the Apply() method on the particular schema class.
     const TfToken apiSchemas;
     /// \brief "clips"
     /// 
-    ///  Dictionary that contains the definition of the clip sets on this prim. See \ref UsdClipsAPI::GetClips. 
+    ///  Dictionary that contains the definition of the clip sets on this prim. See \ref UsdClipsAPI::GetClips.
     const TfToken clips;
     /// \brief "clipSets"
     /// 
-    ///  ListOp that may be used to affect how opinions from clip sets are applied during value resolution.  See \ref UsdClipsAPI::GetClipSets. 
+    ///  ListOp that may be used to affect how opinions from clip sets are applied during value resolution.  See \ref UsdClipsAPI::GetClipSets.
     const TfToken clipSets;
     /// \brief "collection"
     /// 
@@ -87,7 +87,7 @@ struct UsdTokensType {
     const TfToken collection_MultipleApplyTemplate_MembershipExpression;
     /// \brief "exclude"
     /// 
-    ///  This is the token used to exclude a path from a collection.  Although it is not a possible value for the "expansionRule" attribute, it is used as the expansionRule for excluded paths  in UsdCollectionAPI::MembershipQuery::IsPathIncluded. 
+    ///  This is the token used to exclude a path from a collection.  Although it is not a possible value for the "expansionRule" attribute, it is used as the expansionRule for excluded paths  in UsdCollectionAPI::MembershipQuery::IsPathIncluded.
     const TfToken exclude;
     /// \brief "expandPrims"
     /// 
@@ -103,7 +103,7 @@ struct UsdTokensType {
     const TfToken explicitOnly;
     /// \brief "fallbackPrimTypes"
     /// 
-    ///  A dictionary metadata that maps the name of a concrete schema prim type to an ordered list of schema prim types to use instead if the schema prim type doesn't exist in version of USD being used. 
+    ///  A dictionary metadata that maps the name of a concrete schema prim type to an ordered list of schema prim types to use instead if the schema prim type doesn't exist in version of USD being used.
     const TfToken fallbackPrimTypes;
     /// \brief "APISchemaBase"
     /// 

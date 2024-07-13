@@ -435,7 +435,7 @@ class "MaterialBindingAPI"
     relationship named <b>material:binding:collection:<i>purpose:bindingName</i></b>.
     A collection-based binding relationship must have exacly two targets, one of 
     which should be a collection-path (see 
-    \ref UsdCollectionAPI::GetCollectionPath()) and the other should point to a
+    \\ref UsdCollectionAPI::GetCollectionPath()) and the other should point to a
     <b>UsdShadeMaterial</b>. In the future, we may allow a single collection 
     binding to target multiple collections, if we can establish a reasonable 
     round-tripping pattern for applications that only allow a single collection 

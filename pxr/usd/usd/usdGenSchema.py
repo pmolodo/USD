@@ -27,6 +27,7 @@ from __future__ import print_function
 import dataclasses
 import sys, os, re, inspect
 import keyword
+import traceback
 from argparse import ArgumentParser
 from collections import namedtuple
 
@@ -1832,6 +1833,9 @@ if __name__ == '__main__':
     parser.add_argument('-q', '--quiet',
         action='store_true',
         help='Do not output text during execution.')
+    parser.add_argument('--traceback',
+        action='store_true',
+        help='Print tracebacks on errors.')
     parser.add_argument('-n', '--namespace',
         nargs='+',
         type=str,
@@ -1962,4 +1966,6 @@ if __name__ == '__main__':
     
     except Exception as e:
         Print.Err("ERROR:", str(e))
+        if args.traceback:
+            traceback.print_exc()
         sys.exit(1)

@@ -38,13 +38,13 @@ class SdfAssetPath;
 /// 
 /// UsdGeomVisibilityAPI introduces properties that can be used to author
 /// visibility opinions.
-/// 
+///
 /// \note
 /// Currently, this schema only introduces the attributes that are used to
 /// control purpose visibility. Later, this schema will define _all_
 /// visibility-related properties and UsdGeomImageable will no longer define
 /// those properties.
-/// 
+///
 /// The purpose visibility attributes added by this schema,
 /// _guideVisibility_, _proxyVisibility_, and _renderVisibility_ can each be
 /// used to control visibility for geometry of the corresponding purpose
@@ -52,7 +52,7 @@ class SdfAssetPath;
 /// override. I.e., if _visibility_ evaluates to "invisible", purpose
 /// visibility is invisible; otherwise, purpose visibility is determined by
 /// the corresponding purpose visibility attribute.
-/// 
+///
 /// Note that the behavior of _guideVisibility_ is subtly different from the
 /// _proxyVisibility_ and _renderVisibility_ attributes, in that "guide"
 /// purpose visibility always evaluates to either "invisible" or "visible",
@@ -62,11 +62,11 @@ class SdfAssetPath;
 /// we have never found a need to have all guides visible in a scene by
 /// default, whereas we do find that flexibility useful for "proxy" and
 /// "render" geometry.
-/// 
+///
 /// This schema can only be applied to UsdGeomImageable prims. The
 /// UseGeomImageable schema provides API for computing the purpose visibility
 /// values that result from the attributes introduced by this schema.
-/// 
+///
 ///
 /// For any described attribute \em Fallback \em Value or \em Allowed \em Values below
 /// that are text/tokens, the actual token is published and defined in \ref UsdGeomTokens.
@@ -187,14 +187,14 @@ public:
     // --------------------------------------------------------------------- //
     /// 
     /// This attribute controls visibility for geometry with purpose "guide".
-    /// 
+    ///
     /// Unlike overall _visibility_, _guideVisibility_ is uniform, and
     /// therefore cannot be animated.
-    /// 
+    ///
     /// Also unlike overall _visibility_, _guideVisibility_ is tri-state, in
     /// that a descendant with an opinion of "visible" overrides an ancestor
     /// opinion of "invisible".
-    /// 
+    ///
     /// The _guideVisibility_ attribute works in concert with the overall
     /// _visibility_ attribute: The visibility of a prim with purpose "guide"
     /// is determined by the inherited values it receives for the _visibility_
@@ -202,7 +202,7 @@ public:
     /// "invisible", the prim is invisible. If _visibility_ evaluates to
     /// "inherited" and _guideVisibility_ evaluates to "visible", then the
     /// prim is visible. __Otherwise, it is invisible.__
-    /// 
+    ///
     ///
     /// | ||
     /// | -- | -- |
@@ -228,14 +228,14 @@ public:
     // --------------------------------------------------------------------- //
     /// 
     /// This attribute controls visibility for geometry with purpose "proxy".
-    /// 
+    ///
     /// Unlike overall _visibility_, _proxyVisibility_ is uniform, and
     /// therefore cannot be animated.
-    /// 
+    ///
     /// Also unlike overall _visibility_, _proxyVisibility_ is tri-state, in
     /// that a descendant with an opinion of "visible" overrides an ancestor
     /// opinion of "invisible".
-    /// 
+    ///
     /// The _proxyVisibility_ attribute works in concert with the overall
     /// _visibility_ attribute: The visibility of a prim with purpose "proxy"
     /// is determined by the inherited values it receives for the _visibility_
@@ -246,7 +246,7 @@ public:
     /// then the prim is invisible; if _proxyVisibility_ evaluates to
     /// "inherited", then the prim may either be visible or invisible,
     /// depending on a fallback value determined by the calling context.
-    /// 
+    ///
     ///
     /// | ||
     /// | -- | -- |
@@ -273,14 +273,14 @@ public:
     /// 
     /// This attribute controls visibility for geometry with purpose
     /// "render".
-    /// 
+    ///
     /// Unlike overall _visibility_, _renderVisibility_ is uniform, and
     /// therefore cannot be animated.
-    /// 
+    ///
     /// Also unlike overall _visibility_, _renderVisibility_ is tri-state, in
     /// that a descendant with an opinion of "visible" overrides an ancestor
     /// opinion of "invisible".
-    /// 
+    ///
     /// The _renderVisibility_ attribute works in concert with the overall
     /// _visibility_ attribute: The visibility of a prim with purpose "render"
     /// is determined by the inherited values it receives for the _visibility_
@@ -291,7 +291,7 @@ public:
     /// then the prim is invisible; if _renderVisibility_ evaluates to
     /// "inherited", then the prim may either be visible or invisible,
     /// depending on a fallback value determined by the calling context.
-    /// 
+    ///
     ///
     /// | ||
     /// | -- | -- |

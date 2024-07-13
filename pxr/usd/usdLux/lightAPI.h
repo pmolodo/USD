@@ -39,18 +39,18 @@ class SdfAssetPath;
 
 /// \class UsdLuxLightAPI
 ///
-/// API schema that imparts the quality of being a light onto a prim. 
-/// 
-/// A light is any prim that has this schema applied to it.  This is true 
-/// regardless of whether LightAPI is included as a built-in API of the prim 
-/// type (e.g. RectLight or DistantLight) or is applied directly to a Gprim 
+/// API schema that imparts the quality of being a light onto a prim.
+///
+/// A light is any prim that has this schema applied to it.  This is true
+/// regardless of whether LightAPI is included as a built-in API of the prim
+/// type (e.g. RectLight or DistantLight) or is applied directly to a Gprim
 /// that should be treated as a light.
-/// 
+///
 /// <b>Linking</b>
-/// 
+///
 /// Lights can be linked to geometry.  Linking controls which geometry
 /// a light illuminates, and which geometry casts shadows from the light.
-/// 
+///
 /// Linking is specified as collections (UsdCollectionAPI) which can
 /// be accessed via GetLightLinkCollection() and GetShadowLinkCollection().
 /// Note that these collections have their includeRoot set to true,
@@ -62,7 +62,7 @@ class SdfAssetPath;
 /// include the desired objects.  These are complementary approaches
 /// that may each be preferable depending on the scenario and how
 /// to best express the intent of the light setup.
-/// 
+///
 ///
 /// For any described attribute \em Fallback \em Value or \em Allowed \em Values below
 /// that are text/tokens, the actual token is published and defined in \ref UsdLuxTokens.
@@ -181,20 +181,20 @@ public:
     // --------------------------------------------------------------------- //
     // SHADERID 
     // --------------------------------------------------------------------- //
-    /// Default ID for the light's shader. 
+    /// Default ID for the light's shader.
     /// This defines the shader ID for this light when a render context specific
-    /// shader ID is not available. 
-    /// 
-    /// The default shaderId for the intrinsic UsdLux lights (RectLight, 
-    /// DistantLight, etc.) are set to default to the light's type name. For 
+    /// shader ID is not available.
+    ///
+    /// The default shaderId for the intrinsic UsdLux lights (RectLight,
+    /// DistantLight, etc.) are set to default to the light's type name. For
     /// each intrinsic UsdLux light, we will always register an SdrShaderNode in
-    /// the SdrRegistry, with the identifier matching the type name and the 
+    /// the SdrRegistry, with the identifier matching the type name and the
     /// source type "USD", that corresponds to the light's inputs.
     /// \see GetShaderId
     /// \see GetShaderIdAttrForRenderContext
     /// \see SdrRegistry::GetShaderNodeByIdentifier
     /// \see SdrRegistry::GetShaderNodeByIdentifierAndType
-    /// 
+    ///
     ///
     /// | ||
     /// | -- | -- |
@@ -217,33 +217,33 @@ public:
     // --------------------------------------------------------------------- //
     // MATERIALSYNCMODE 
     // --------------------------------------------------------------------- //
-    /// For a LightAPI applied to geometry that has a bound Material, 
-    /// which is entirely or partly emissive, this specifies the relationship 
+    /// For a LightAPI applied to geometry that has a bound Material,
+    /// which is entirely or partly emissive, this specifies the relationship
     /// of the Material response to the lighting response.
     /// Valid values are:
-    /// - materialGlowTintsLight: All primary and secondary rays see the 
-    /// emissive/glow response as dictated by the bound Material while the 
-    /// base color seen by light rays (which is then modulated by all of the 
-    /// other LightAPI controls) is the multiplication of the color feeding 
-    /// the emission/glow input of the Material (i.e. its surface or volume 
-    /// shader) with the scalar or pattern input to *inputs:color*.
-    /// This allows the light's color to tint the geometry's glow color while 
-    /// preserving access to intensity and other light controls as ways to 
-    /// further modulate the illumination.
-    /// - independent: All primary and secondary rays see the emissive/glow 
-    /// response as dictated by the bound Material, while the base color seen 
-    /// by light rays is determined solely by *inputs:color*. Note that for 
-    /// partially emissive geometry (in which some parts are reflective 
-    /// rather than emissive), a suitable pattern must be connected to the 
-    /// light's color input, or else the light will radiate uniformly from 
-    /// the geometry.
+    /// - materialGlowTintsLight: All primary and secondary rays see the
+    ///   emissive/glow response as dictated by the bound Material while the
+    ///   base color seen by light rays (which is then modulated by all of the
+    ///   other LightAPI controls) is the multiplication of the color feeding
+    ///   the emission/glow input of the Material (i.e. its surface or volume
+    ///   shader) with the scalar or pattern input to *inputs:color*.
+    ///   This allows the light's color to tint the geometry's glow color while
+    ///   preserving access to intensity and other light controls as ways to
+    ///   further modulate the illumination.
+    /// - independent: All primary and secondary rays see the emissive/glow
+    ///   response as dictated by the bound Material, while the base color seen
+    ///   by light rays is determined solely by *inputs:color*. Note that for
+    ///   partially emissive geometry (in which some parts are reflective
+    ///   rather than emissive), a suitable pattern must be connected to the
+    ///   light's color input, or else the light will radiate uniformly from
+    ///   the geometry.
     /// - noMaterialResponse: The geometry behaves as if there is no Material
-    /// bound at all, i.e. there is no diffuse, specular, or transmissive 
-    /// response. The base color of light rays is entirely controlled by the
-    /// *inputs:color*. This is the standard mode for "canonical" lights in 
-    /// UsdLux and indicates to renderers that a Material will either never 
-    /// be bound or can always be ignored.
-    /// 
+    ///   bound at all, i.e. there is no diffuse, specular, or transmissive
+    ///   response. The base color of light rays is entirely controlled by the
+    ///   *inputs:color*. This is the standard mode for "canonical" lights in
+    ///   UsdLux and indicates to renderers that a Material will either never
+    ///   be bound or can always be ignored.
+    ///
     ///
     /// | ||
     /// | -- | -- |

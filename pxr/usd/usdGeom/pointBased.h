@@ -134,8 +134,8 @@ public:
     // --------------------------------------------------------------------- //
     // VELOCITIES 
     // --------------------------------------------------------------------- //
-    /// If provided, 'velocities' should be used by renderers to 
-    /// 
+    /// If provided, 'velocities' should be used by renderers to
+    ///
     /// compute positions between samples for the 'points' attribute, rather
     /// than interpolating between neighboring 'points' samples.  This is the
     /// only reasonable means of computing motion blur for topologically
@@ -144,7 +144,7 @@ public:
     /// 'points' sample.  Velocity is measured in position units per second,
     /// as per most simulation software. To convert to position units per
     /// UsdTimeCode, divide by UsdStage::GetTimeCodesPerSecond().
-    /// 
+    ///
     /// See also \ref UsdGeom_VelocityInterpolation .
     ///
     /// | ||
@@ -194,8 +194,8 @@ public:
     // --------------------------------------------------------------------- //
     // NORMALS 
     // --------------------------------------------------------------------- //
-    /// Provide an object-space orientation for individual points, 
-    /// which, depending on subclass, may define a surface, curve, or free 
+    /// Provide an object-space orientation for individual points,
+    /// which, depending on subclass, may define a surface, curve, or free
     /// points.  Note that 'normals' should not be authored on any Mesh that
     /// is subdivided, since the subdivision algorithm will define its own
     /// normals. 'normals' is not a generic primvar, but the number of elements

@@ -43,28 +43,28 @@ class SdfAssetPath;
 /// UsdGeomBasisCurves as the representation of curves intended to be rendered
 /// (ie. hair or grass). Hermite curves can be converted to a Bezier
 /// representation (though not from Bezier back to Hermite in general).
-/// 
+///
 /// \section UsdGeomHermiteCurves_Interpolation Point Interpolation
-/// 
+///
 /// The initial cubic curve segment is defined by the first two points and
-/// first two tangents. Additional segments are defined by additional 
+/// first two tangents. Additional segments are defined by additional
 /// point / tangent pairs.  The number of segments for each non-batched hermite
 /// curve would be len(curve.points) - 1.  The total number of segments
 /// for the batched UsdGeomHermiteCurves representation is
 /// len(points) - len(curveVertexCounts).
-/// 
+///
 /// \section UsdGeomHermiteCurves_Primvars Primvar, Width, and Normal Interpolation
-/// 
+///
 /// Primvar interpolation is not well specified for this type as it is not
 /// intended as a rendering representation. We suggest that per point
-/// primvars would be linearly interpolated across each segment and should 
+/// primvars would be linearly interpolated across each segment and should
 /// be tagged as 'varying'.
-/// 
+///
 /// It is not immediately clear how to specify cubic or 'vertex' interpolation
 /// for this type, as we lack a specification for primvar tangents. This
 /// also means that width and normal interpolation should be restricted to
 /// varying (linear), uniform (per curve element), or constant (per prim).
-/// 
+///
 ///
 class UsdGeomHermiteCurves : public UsdGeomCurves
 {
@@ -164,7 +164,7 @@ public:
     // --------------------------------------------------------------------- //
     // TANGENTS 
     // --------------------------------------------------------------------- //
-    /// Defines the outgoing trajectory tangent for each point. 
+    /// Defines the outgoing trajectory tangent for each point.
     /// Tangents should be the same size as the points attribute.
     ///
     /// | ||

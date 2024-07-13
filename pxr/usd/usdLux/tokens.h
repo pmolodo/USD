@@ -79,7 +79,7 @@ struct UsdLuxTokensType {
     const TfToken cubeMapVerticalCross;
     /// \brief "filterLink"
     /// 
-    ///  This token represents the collection name to use with UsdCollectionAPI to represent filter-linking of a UsdLuxLightFilter prim. 
+    ///  This token represents the collection name to use with UsdCollectionAPI to represent filter-linking of a UsdLuxLightFilter prim.
     const TfToken filterLink;
     /// \brief "geometry"
     /// 
@@ -219,7 +219,7 @@ struct UsdLuxTokensType {
     const TfToken lightFilterShaderId;
     /// \brief "lightLink"
     /// 
-    ///  This token represents the collection name to use with UsdCollectionAPI to represent light-linking of a prim with an applied UsdLuxLightAPI. 
+    ///  This token represents the collection name to use with UsdCollectionAPI to represent light-linking of a prim with an applied UsdLuxLightAPI.
     const TfToken lightLink;
     /// \brief "lightList"
     /// 
@@ -255,7 +255,7 @@ struct UsdLuxTokensType {
     const TfToken noMaterialResponse;
     /// \brief "orientToStageUpAxis"
     /// 
-    ///  This token represents the suffix for a UsdGeomXformOp used to orient a light with the stage's up axis. 
+    ///  This token represents the suffix for a UsdGeomXformOp used to orient a light with the stage's up axis.
     const TfToken orientToStageUpAxis;
     /// \brief "poleAxis"
     /// 
@@ -271,7 +271,7 @@ struct UsdLuxTokensType {
     const TfToken scene;
     /// \brief "shadowLink"
     /// 
-    ///  This token represents the collection name to use with UsdCollectionAPI to represent shadow-linking of a prim with an applied UsdLuxLightAPI. 
+    ///  This token represents the collection name to use with UsdCollectionAPI to represent shadow-linking of a prim with an applied UsdLuxLightAPI.
     const TfToken shadowLink;
     /// \brief "treatAsLine"
     /// 

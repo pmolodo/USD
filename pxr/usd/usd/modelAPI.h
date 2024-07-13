@@ -36,21 +36,21 @@ class SdfAssetPath;
 ///
 /// UsdModelAPI is an API schema that provides an interface to a prim's
 /// model qualities, if it does, in fact, represent the root prim of a model.
-/// 
-/// The first and foremost model quality is its \em kind, i.e. the metadata 
+///
+/// The first and foremost model quality is its \em kind, i.e. the metadata
 /// that establishes it as a model (See KindRegistry).  UsdModelAPI provides
 /// various methods for setting and querying the prim's kind, as well as
 /// queries (also available on UsdPrim) for asking what category of model
 /// the prim is.  See \ref Usd_ModelKind "Kind and Model-ness".
-/// 
+///
 /// UsdModelAPI also provides access to a prim's \ref Usd_Model_AssetInfo "assetInfo"
 /// data.  While any prim \em can host assetInfo, it is common that published
 /// (referenced) assets are packaged as models, therefore it is convenient
 /// to provide access to the one from the other.
-/// 
+///
 /// \todo establish an _IsCompatible() override that returns IsModel()
 /// \todo GetModelInstanceName()
-/// 
+///
 ///
 class UsdModelAPI : public UsdAPISchemaBase
 {

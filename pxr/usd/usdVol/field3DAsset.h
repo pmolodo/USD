@@ -143,8 +143,8 @@ public:
     // --------------------------------------------------------------------- //
     /// Token which is used to indicate the data type of an
     /// individual field. Authors use this to tell consumers more
-    /// about the field without opening the file on disk. The list of 
-    /// allowed tokens reflects the available choices for Field3d 
+    /// about the field without opening the file on disk. The list of
+    /// allowed tokens reflects the available choices for Field3d
     /// volumes.
     ///
     /// | ||
@@ -168,8 +168,8 @@ public:
     // --------------------------------------------------------------------- //
     // FIELDPURPOSE 
     // --------------------------------------------------------------------- //
-    /// Optional token which can be used to indicate the purpose or 
-    /// grouping of an individual field. Clients which consume Field3D 
+    /// Optional token which can be used to indicate the purpose or
+    /// grouping of an individual field. Clients which consume Field3D
     /// files should treat this as the Field3D field \em name.
     ///
     /// | ||

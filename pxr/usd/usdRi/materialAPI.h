@@ -43,8 +43,8 @@ class SdfAssetPath;
 /// 
 /// \deprecated Materials should use UsdShadeMaterial instead.
 /// This schema will be removed in a future release.
-/// 
-/// This API provides outputs that connect a material prim to prman 
+///
+/// This API provides outputs that connect a material prim to prman
 /// shaders and RIS objects.
 ///
 /// For any described attribute \em Fallback \em Value or \em Allowed \em Values below

@@ -51,7 +51,7 @@ struct UsdMediaTokensType {
     const TfToken auralMode;
     /// \brief "defaultImage"
     /// 
-    /// Dictionary key in a Thumbnails dictionary for the default thumbnail image. 
+    /// Dictionary key in a Thumbnails dictionary for the default thumbnail image.
     const TfToken defaultImage;
     /// \brief "endTime"
     /// 
@@ -99,15 +99,15 @@ struct UsdMediaTokensType {
     const TfToken playbackMode;
     /// \brief "previews"
     /// 
-    /// Dictionary key in the assetInfo dictionary for asset previews sub-dictionary. 
+    /// Dictionary key in the assetInfo dictionary for asset previews sub-dictionary.
     const TfToken previews;
     /// \brief "previews:thumbnails"
     /// 
-    /// Full key in the assetInfo dictionary for thumbnails previews dictionary. 
+    /// Full key in the assetInfo dictionary for thumbnails previews dictionary.
     const TfToken previewThumbnails;
     /// \brief "previews:thumbnails:default"
     /// 
-    /// Full key in the assetInfo dictionary for the "default" thumbnails in the previews dictionary. 
+    /// Full key in the assetInfo dictionary for the "default" thumbnails in the previews dictionary.
     const TfToken previewThumbnailsDefault;
     /// \brief "spatial"
     /// 
@@ -119,7 +119,7 @@ struct UsdMediaTokensType {
     const TfToken startTime;
     /// \brief "thumbnails"
     /// 
-    /// Dictionary key in the assetInfo["previews"]  dictionary for thumbnails previews sub-dictionary. 
+    /// Dictionary key in the assetInfo["previews"]  dictionary for thumbnails previews sub-dictionary.
     const TfToken thumbnails;
     /// \brief "AssetPreviewsAPI"
     /// 

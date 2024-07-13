@@ -38,8 +38,8 @@ class SdfAssetPath;
 /// Defines a primitive capsule, i.e. a cylinder capped by two half
 /// spheres, centered at the origin, whose spine is along the specified
 /// \em axis.
-/// The spherical cap heights (sagitta) of the two endcaps are a function of 
-/// the relative radii of the endcaps, such that cylinder tangent and sphere 
+/// The spherical cap heights (sagitta) of the two endcaps are a function of
+/// the relative radii of the endcaps, such that cylinder tangent and sphere
 /// tangent are coincident and maintain C1 continuity.
 ///
 /// For any described attribute \em Fallback \em Value or \em Allowed \em Values below
@@ -173,7 +173,7 @@ public:
     // --------------------------------------------------------------------- //
     /// The radius of the capsule.  If you
     /// author \em radius you must also author \em extent.
-    /// 
+    ///
     /// \sa GetExtentAttr()
     ///
     /// | ||

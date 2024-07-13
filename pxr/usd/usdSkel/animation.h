@@ -37,10 +37,10 @@ class SdfAssetPath;
 ///
 /// Describes a skel animation, where joint animation is stored in a
 /// vectorized form.
-/// 
+///
 /// See the extended \ref UsdSkel_SkelAnimation "Skel Animation"
 /// documentation for more information.
-/// 
+///
 ///
 class UsdSkelAnimation : public UsdTyped
 {
@@ -166,7 +166,7 @@ public:
     // --------------------------------------------------------------------- //
     // TRANSLATIONS 
     // --------------------------------------------------------------------- //
-    /// Joint-local translations of all affected joints. Array length 
+    /// Joint-local translations of all affected joints. Array length
     /// should match the size of the *joints* attribute.
     ///
     /// | ||
@@ -189,8 +189,8 @@ public:
     // --------------------------------------------------------------------- //
     // ROTATIONS 
     // --------------------------------------------------------------------- //
-    /// Joint-local unit quaternion rotations of all affected joints, 
-    /// in 32-bit precision. Array length should match the size of the 
+    /// Joint-local unit quaternion rotations of all affected joints,
+    /// in 32-bit precision. Array length should match the size of the
     /// *joints* attribute.
     ///
     /// | ||
@@ -214,7 +214,7 @@ public:
     // SCALES 
     // --------------------------------------------------------------------- //
     /// Joint-local scales of all affected joints, in
-    /// 16 bit precision. Array length should match the size of the *joints* 
+    /// 16 bit precision. Array length should match the size of the *joints*
     /// attribute.
     ///
     /// | ||

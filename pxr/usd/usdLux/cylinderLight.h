@@ -38,7 +38,7 @@ class SdfAssetPath;
 /// Light emitted outward from a cylinder.
 /// The cylinder is centered at the origin and has its major axis on the X axis.
 /// The cylinder does not emit light from the flat end-caps.
-/// 
+///
 ///
 class UsdLuxCylinderLight : public UsdLuxBoundableLightBase
 {

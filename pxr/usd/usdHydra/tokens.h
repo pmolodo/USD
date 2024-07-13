@@ -91,7 +91,7 @@ struct UsdHydraTokensType {
     const TfToken infoFilename;
     /// \brief "inputs:varname"
     /// 
-    ///  
+    /// 
     const TfToken infoVarname;
     /// \brief "linear"
     /// 
@@ -99,11 +99,11 @@ struct UsdHydraTokensType {
     const TfToken linear;
     /// \brief "linearMipmapLinear"
     /// 
-    /// See https://www.opengl.org/wiki/Sampler_Object , Possible value for the "minFilter" input on a UvTexture shader. 
+    /// See https://www.opengl.org/wiki/Sampler_Object , Possible value for the "minFilter" input on a UvTexture shader.
     const TfToken linearMipmapLinear;
     /// \brief "linearMipmapNearest"
     /// 
-    /// See https://www.opengl.org/wiki/Sampler_Object  Possible value for the "minFilter" input on a UvTexture shader. 
+    /// See https://www.opengl.org/wiki/Sampler_Object  Possible value for the "minFilter" input on a UvTexture shader.
     const TfToken linearMipmapNearest;
     /// \brief "magFilter"
     /// 
@@ -127,7 +127,7 @@ struct UsdHydraTokensType {
     const TfToken nearestMipmapLinear;
     /// \brief "nearestMipmapNearest"
     /// 
-    /// See https://www.opengl.org/wiki/Sampler_Object Possible value for the "minFilter" input on a UvTexture shader. 
+    /// See https://www.opengl.org/wiki/Sampler_Object Possible value for the "minFilter" input on a UvTexture shader.
     const TfToken nearestMipmapNearest;
     /// \brief "primvars:hdGp:proceduralType"
     /// 

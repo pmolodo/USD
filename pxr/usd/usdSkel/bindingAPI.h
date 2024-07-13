@@ -42,10 +42,10 @@ class SdfAssetPath;
 /// Provides API for authoring and extracting all the skinning-related
 /// data that lives in the "geometry hierarchy" of prims and models that want
 /// to be skeletally deformed.
-/// 
+///
 /// See the extended \ref UsdSkel_BindingAPI "UsdSkelBindingAPI schema"
 /// documentation for more about bindings and how they apply in a scene graph.
-/// 
+///
 ///
 /// For any described attribute \em Fallback \em Value or \em Allowed \em Values below
 /// that are text/tokens, the actual token is published and defined in \ref UsdSkelTokens.
@@ -217,7 +217,7 @@ public:
     /// An (optional) array of tokens defining the list of
     /// joints to which jointIndices apply. If not defined, jointIndices applies
     /// to the ordered list of joints defined in the bound Skeleton's *joints*
-    /// attribute. If undefined on a primitive, the primitive inherits the 
+    /// attribute. If undefined on a primitive, the primitive inherits the
     /// value of the nearest ancestor prim, if any.
     ///
     /// | ||
@@ -327,7 +327,7 @@ public:
     // --------------------------------------------------------------------- //
     /// Animation source to be bound to Skeleton primitives at or
     /// beneath the location at which this property is defined.
-    /// 
+    ///
     ///
     USDSKEL_API
     UsdRelationship GetAnimationSourceRel() const;

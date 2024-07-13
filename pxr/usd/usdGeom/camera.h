@@ -38,17 +38,17 @@ class SdfAssetPath;
 /// \class UsdGeomCamera
 ///
 /// Transformable camera.
-/// 
+///
 /// Describes optical properties of a camera via a common set of attributes
 /// that provide control over the camera's frustum as well as its depth of
 /// field. For stereo, the left and right camera are individual prims tagged
 /// through the \ref UsdGeomCamera::GetStereoRoleAttr() "stereoRole attribute".
-/// 
+///
 /// There is a corresponding class GfCamera, which can hold the state of a
 /// camera (at a particular time). \ref UsdGeomCamera::GetCamera() and
 /// \ref UsdGeomCamera::SetFromCamera() convert between a USD camera prim and
 /// a GfCamera.
-/// 
+///
 /// To obtain the camera's location in world space, call the following on a
 /// UsdGeomCamera 'camera':
 /// \code
@@ -56,14 +56,14 @@ class SdfAssetPath;
 /// \endcode
 /// \note
 /// <b>Cameras in USD are always "Y up", regardless of the stage's orientation
-/// (i.e. UsdGeomGetStageUpAxis()).</b>  This means that the inverse of 
-/// 'camXform' (the VIEW half of the <A HREF="http://www.glprogramming.com/red/chapter03.html#name2">MODELVIEW transform in OpenGL parlance</A>) 
-/// will transform the world such that the camera is at the origin, looking 
+/// (i.e. UsdGeomGetStageUpAxis()).</b>  This means that the inverse of
+/// 'camXform' (the VIEW half of the <A HREF="http://www.glprogramming.com/red/chapter03.html#name2">MODELVIEW transform in OpenGL parlance</A>)
+/// will transform the world such that the camera is at the origin, looking
 /// down the -Z axis, with +Y as the up axis, and +X pointing to the right.
-/// This describes a __right handed coordinate system__. 
-/// 
+/// This describes a __right handed coordinate system__.
+///
 /// \section UsdGeom_CameraUnits Units of Measure for Camera Properties
-/// 
+///
 /// Despite the familiarity of millimeters for specifying some physical
 /// camera properties, UsdGeomCamera opts for greater consistency with all
 /// other UsdGeom schemas, which measure geometric properties in scene units,
@@ -73,7 +73,7 @@ class SdfAssetPath;
 /// that with the fallback value of .01 for _metersPerUnit_ - i.e. scene unit
 /// of centimeters - then these "tenth of scene unit" properties are
 /// effectively millimeters.
-/// 
+///
 /// \note If one adds a Camera prim to a UsdStage whose scene unit is not
 /// centimeters, the fallback values for filmback properties will be
 /// incorrect (or at the least, unexpected) in an absolute sense; however,
@@ -81,10 +81,10 @@ class SdfAssetPath;
 /// only on ratios of the other properties, so the camera is still usable.
 /// However, it follows that if even one property is authored in the correct
 /// scene units, then they all must be.
-/// 
-/// 
+///
+///
 /// \sa \ref UsdGeom_LinAlgBasics
-/// 
+///
 ///
 /// For any described attribute \em Fallback \em Value or \em Allowed \em Values below
 /// that are text/tokens, the actual token is published and defined in \ref UsdGeomTokens.
@@ -212,8 +212,8 @@ public:
     // --------------------------------------------------------------------- //
     // HORIZONTALAPERTURE 
     // --------------------------------------------------------------------- //
-    /// Horizontal aperture in tenths of a scene unit; see 
-    /// \ref UsdGeom_CameraUnits . Default is the equivalent of 
+    /// Horizontal aperture in tenths of a scene unit; see
+    /// \ref UsdGeom_CameraUnits . Default is the equivalent of
     /// the standard 35mm spherical projector aperture.
     ///
     /// | ||
@@ -236,8 +236,8 @@ public:
     // --------------------------------------------------------------------- //
     // VERTICALAPERTURE 
     // --------------------------------------------------------------------- //
-    /// Vertical aperture in tenths of a scene unit; see 
-    /// \ref UsdGeom_CameraUnits . Default is the equivalent of 
+    /// Vertical aperture in tenths of a scene unit; see
+    /// \ref UsdGeom_CameraUnits . Default is the equivalent of
     /// the standard 35mm spherical projector aperture.
     ///
     /// | ||
@@ -306,7 +306,7 @@ public:
     // --------------------------------------------------------------------- //
     // FOCALLENGTH 
     // --------------------------------------------------------------------- //
-    /// Perspective focal length in tenths of a scene unit; see 
+    /// Perspective focal length in tenths of a scene unit; see
     /// \ref UsdGeom_CameraUnits .
     ///
     /// | ||
@@ -329,7 +329,7 @@ public:
     // --------------------------------------------------------------------- //
     // CLIPPINGRANGE 
     // --------------------------------------------------------------------- //
-    /// Near and far clipping distances in scene units; see 
+    /// Near and far clipping distances in scene units; see
     /// \ref UsdGeom_CameraUnits .
     ///
     /// | ||
@@ -399,7 +399,7 @@ public:
     // --------------------------------------------------------------------- //
     // FOCUSDISTANCE 
     // --------------------------------------------------------------------- //
-    /// Distance from the camera to the focus plane in scene units; see 
+    /// Distance from the camera to the focus plane in scene units; see
     /// \ref UsdGeom_CameraUnits .
     ///
     /// | ||

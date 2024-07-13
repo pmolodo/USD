@@ -38,14 +38,14 @@ class SdfAssetPath;
 /// \class UsdGeomMesh
 ///
 /// Encodes a mesh with optional subdivision properties and features.
-/// 
-/// As a point-based primitive, meshes are defined in terms of points that 
+///
+/// As a point-based primitive, meshes are defined in terms of points that
 /// are connected into edges and faces. Many references to meshes use the
 /// term 'vertex' in place of or interchangeably with 'points', while some
 /// use 'vertex' to refer to the 'face-vertices' that define a face.  To
 /// avoid confusion, the term 'vertex' is intentionally avoided in favor of
 /// 'points' or 'face-vertices'.
-/// 
+///
 /// The connectivity between points, edges and faces is encoded using a
 /// common minimal topological description of the faces of the mesh.  Each
 /// face is defined by a set of face-vertices using indices into the Mesh's
@@ -55,7 +55,7 @@ class SdfAssetPath;
 /// consecutive face-vertices in _faceVertexIndices_ that define the face.
 /// No additional connectivity information is required or constructed, so
 /// no adjacency or neighborhood queries are available.
-/// 
+///
 /// A key property of this mesh schema is that it encodes both subdivision
 /// surfaces and simpler polygonal meshes. This is achieved by varying the
 /// _subdivisionScheme_ attribute, which is set to specify Catmull-Clark
@@ -64,38 +64,38 @@ class SdfAssetPath;
 /// features encoded in optional attributes conform to the feature set of
 /// OpenSubdiv
 /// (https://graphics.pixar.com/opensubdiv/docs/subdivision_surfaces.html).
-/// 
+///
 /// \anchor UsdGeom_Mesh_Primvars
 /// __A Note About Primvars__
-/// 
+///
 /// The following list clarifies the number of elements for and the
 /// interpolation behavior of the different primvar interpolation types
 /// for meshes:
-/// 
+///
 /// - __constant__: One element for the entire mesh; no interpolation.
 /// - __uniform__: One element for each face of the mesh; elements are
-/// typically not interpolated but are inherited by other faces derived
-/// from a given face (via subdivision, tessellation, etc.).
+///   typically not interpolated but are inherited by other faces derived
+///   from a given face (via subdivision, tessellation, etc.).
 /// - __varying__: One element for each point of the mesh;
-/// interpolation of point data is always linear.
+///   interpolation of point data is always linear.
 /// - __vertex__: One element for each point of the mesh;
-/// interpolation of point data is applied according to the
-/// _subdivisionScheme_ attribute.
+///   interpolation of point data is applied according to the
+///   _subdivisionScheme_ attribute.
 /// - __faceVarying__: One element for each of the face-vertices that
-/// define the mesh topology; interpolation of face-vertex data may
-/// be smooth or linear, according to the _subdivisionScheme_ and
-/// _faceVaryingLinearInterpolation_ attributes.
-/// 
+///   define the mesh topology; interpolation of face-vertex data may
+///   be smooth or linear, according to the _subdivisionScheme_ and
+///   _faceVaryingLinearInterpolation_ attributes.
+///
 /// Primvar interpolation types and related utilities are described more
 /// generally in \ref Usd_InterpolationVals.
-/// 
+///
 /// \anchor UsdGeom_Mesh_Normals
 /// __A Note About Normals__
-/// 
+///
 /// Normals should not be authored on a subdivision mesh, since subdivision
 /// algorithms define their own normals. They should only be authored for
 /// polygonal meshes (_subdivisionScheme_ = "none").
-/// 
+///
 /// The _normals_ attribute inherited from UsdGeomPointBased is not a generic
 /// primvar, but the number of elements in this attribute will be determined by
 /// its _interpolation_.  See \ref UsdGeomPointBased::GetNormalsInterpolation() .
@@ -103,7 +103,7 @@ class SdfAssetPath;
 /// precedence.  If a polygonal mesh specifies __neither__ _normals_ nor
 /// _primvars:normals_, then it should be treated and rendered as faceted,
 /// with no attempt to compute smooth normals.
-/// 
+///
 /// The normals generated for smooth subdivision schemes, e.g. Catmull-Clark
 /// and Loop, will likewise be smooth, but others, e.g. Bilinear, may be
 /// discontinuous between faces and/or within non-planar irregular faces.
@@ -235,7 +235,7 @@ public:
     // --------------------------------------------------------------------- //
     // FACEVERTEXCOUNTS 
     // --------------------------------------------------------------------- //
-    /// Provides the number of vertices in each face of the mesh, 
+    /// Provides the number of vertices in each face of the mesh,
     /// which is also the number of consecutive indices in _faceVertexIndices_
     /// that define the face.  The length of this attribute is the number of
     /// faces in the mesh.  If this attribute has more than
@@ -263,17 +263,17 @@ public:
     // --------------------------------------------------------------------- //
     /// The subdivision scheme to be applied to the surface.
     /// Valid values are:
-    /// 
+    ///
     /// - __catmullClark__: The default, Catmull-Clark subdivision; preferred
-    /// for quad-dominant meshes (generalizes B-splines); interpolation
-    /// of point data is smooth (non-linear)
+    ///   for quad-dominant meshes (generalizes B-splines); interpolation
+    ///   of point data is smooth (non-linear)
     /// - __loop__: Loop subdivision; preferred for purely triangular meshes;
-    /// interpolation of point data is smooth (non-linear)
+    ///   interpolation of point data is smooth (non-linear)
     /// - __bilinear__: Subdivision reduces all faces to quads (topologically
-    /// similar to "catmullClark"); interpolation of point data is bilinear
+    ///   similar to "catmullClark"); interpolation of point data is bilinear
     /// - __none__: No subdivision, i.e. a simple polygonal mesh; interpolation
-    /// of point data is linear
-    /// 
+    ///   of point data is linear
+    ///
     /// Polygonal meshes are typically lighter weight and faster to render,
     /// depending on renderer and render mode.  Use of "bilinear" will produce
     /// a similar shape to a polygonal mesh and may offer additional guarantees
@@ -305,14 +305,14 @@ public:
     /// Specifies how subdivision is applied for faces adjacent to
     /// boundary edges and boundary points. Valid values correspond to choices
     /// available in OpenSubdiv:
-    /// 
+    ///
     /// - __none__: No boundary interpolation is applied and boundary faces are
-    /// effectively treated as holes
+    ///   effectively treated as holes
     /// - __edgeOnly__: A sequence of boundary edges defines a smooth curve to
-    /// which the edges of subdivided boundary faces converge
+    ///   which the edges of subdivided boundary faces converge
     /// - __edgeAndCorner__: The default, similar to "edgeOnly" but the smooth
-    /// boundary curve is made sharp at corner points
-    /// 
+    ///   boundary curve is made sharp at corner points
+    ///
     /// These are illustrated and described in more detail in the OpenSubdiv
     /// documentation:
     /// https://graphics.pixar.com/opensubdiv/docs/subdivision_surfaces.html#boundary-interpolation-rules
@@ -343,20 +343,20 @@ public:
     /// can be as smooth as a "vertex" primvar or constrained to be linear at
     /// features specified by several options.  Valid values correspond to
     /// choices available in OpenSubdiv:
-    /// 
+    ///
     /// - __none__: No linear constraints or sharpening, smooth everywhere
     /// - __cornersOnly__: Sharpen corners of discontinuous boundaries only,
-    /// smooth everywhere else
+    ///   smooth everywhere else
     /// - __cornersPlus1__: The default, same as "cornersOnly" plus additional
-    /// sharpening at points where three or more distinct face-varying
-    /// values occur
+    ///   sharpening at points where three or more distinct face-varying
+    ///   values occur
     /// - __cornersPlus2__: Same as "cornersPlus1" plus additional sharpening
-    /// at points with at least one discontinuous boundary corner or
-    /// only one discontinuous boundary edge (a dart)
+    ///   at points with at least one discontinuous boundary corner or
+    ///   only one discontinuous boundary edge (a dart)
     /// - __boundaries__: Piecewise linear along discontinuous boundaries,
-    /// smooth interior
+    ///   smooth interior
     /// - __all__: Piecewise linear everywhere
-    /// 
+    ///
     /// These are illustrated and described in more detail in the OpenSubdiv
     /// documentation:
     /// https://graphics.pixar.com/opensubdiv/docs/subdivision_surfaces.html#face-varying-interpolation-rules
@@ -386,7 +386,7 @@ public:
     /// Catmull-Clark scheme to try and improve undesirable artifacts when
     /// subdividing triangles.  Valid values are "catmullClark" for the
     /// standard rules (the default) and "smooth" for the improvement.
-    /// 
+    ///
     /// See https://graphics.pixar.com/opensubdiv/docs/subdivision_surfaces.html#triangle-subdivision-rule
     ///
     /// | ||

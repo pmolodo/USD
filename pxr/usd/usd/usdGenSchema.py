@@ -2015,11 +2015,17 @@ if __name__ == '__main__':
              'directory paths that match will not be recursed into. The match '
              'is done against the directory path relative to the root search '
              'director. [Default: %(default)s]')
-    parser.add_argument('-s', '--smart-whitespace',
+    whitespace_group = parser.add_mutually_exclusive_group()
+    whitespace_group.add_argument('--smart-whitespace',
         action='store_true',
-        help='Use a more intelligent method for striping leading whitespace '
-             'from docstrings, that attempts to preserve "intentional" '
-             'leading whitespace')
+        default=True,
+        help='Use a more intelligent method for striping whitespace from '
+             'docstrings, that attempts to preserve "intentional" leading '
+             'whitespace, and removes trailing whitespace')
+    whitespace_group.add_argument('--legacy-whitespace',
+        action='store_false',
+        dest="smart_whitespace",
+        help='Use older method for stripping whitespace')
     parser.add_argument('--newline',
         choices=('linux', 'windows', 'os'),
         default='os',

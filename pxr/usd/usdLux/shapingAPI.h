@@ -156,13 +156,13 @@ public:
     /// values pull light towards the center and narrow the spread.
     ///
     /// This is implemented as a multiplication with the dot product between the
-    /// light's surface normal and the emission direction, raised to the power `focus`,
-    ///  i.e. 
+    /// light's surface normal and the emission direction, raised to the power
+    /// `focus`, i.e.
     ///
-    /// ```
+    /// ```C++
     /// if (focus > 0.0) {
     ///     const float focusFactor = powf(emissionDirection * lightNormal, focus);
-    ///     Le = GfCompMult(Le, powf(emissionDirection * lightNormal, focus));
+    ///     LColor = GfCompMult(LColor, powf(emissionDirection * lightNormal, focus));
     /// }
     /// ```
     ///
@@ -193,13 +193,14 @@ public:
     /// This is implemented as a linear interpolation between `focusTint` and
     /// white, by the factor computed from the focus attribute, in other words:
     ///
-    /// ```
+    /// ```C++
     /// if (focus > 0.0) {
     ///     const float focusFactor = powf(emissionDirection * lightNormal, focus);
     ///     const GfVec3f focusTintFactor = lerp(focusTint, GfVec3f(1), focusFactor);
-    ///     Le = GfCompMult(Le, focusTintFactor);
+    ///     LColor = GfCompMult(LColor, focusTintFactor);
     /// }
     /// ```
+    ///
     ///
     /// | ||
     /// | -- | -- |
@@ -221,17 +222,17 @@ public:
     // --------------------------------------------------------------------- //
     // SHAPING:CONE:ANGLE 
     // --------------------------------------------------------------------- //
-    /// Angular limit off the primary axis to restrict the light spread, in
-    /// degrees.
+    /// Angular limit off the primary axis to restrict the light
+    /// spread, in degrees.
     ///
     /// Light emissions at angles off the primary axis greater than this are
     /// guaranteed to be zero, ie:
     ///
-    /// ```
+    /// ```C++
     /// const float thetaEmissionOffAxis = acosf(lightNormal * emissionDir);
     /// const float thetaCutoff = coneAngle * M_PI / 180.0f;
     /// if (thetaEmissionOffAxis > thetaCutoff) {
-    ///     Le = 0;
+    ///     LScalar = 0;
     /// }
     /// ```
     ///
@@ -239,6 +240,7 @@ public:
     /// - see below.  But at the default of coneSoftness = 0, the luminance is
     /// unaltered if the emissionOffAxisAngle <= coneAngle, so the coneAngle
     /// functions as a hard binary "off" toggle for all angles > coneAngle.
+    ///
     ///
     /// | ||
     /// | -- | -- |
@@ -267,15 +269,15 @@ public:
     /// emissionOffAxisAngle > coneAngle, so in this situation the coneAngle
     /// functions as a hard binary "off" toggle for all angles > coneAngle.
     ///
-    /// For 0 < coneSoftness <= 1, it defines the proportion of the the
-    /// non-cutoff angles that are attenuated with a coneAngleFactor that is
-    /// transitioning between 0 and 1.  More precisely:
+    /// For 0 < coneSoftness <= 1, it defines the proportion of the
+    /// non-cutoff angles over which the luminance is smoothly interpolated from
+    /// 0 to 1.  More precisely:
     ///
-    /// ```
+    /// ```C++
     /// const float thetaEmissionOffAxis = acosf(lightNormal * emissionDir);
     /// const float thetaCutoff = coneAngle * M_PI / 180.0f;
-    /// const float thetaSmoothStart = Lerp(thetaCutoff, 0.0f, coneSoftness);
-    /// Le *= 1.0f - Smoothstep(thetaSmoothStart, thetaCutoff, thetaEmissionOffAxis);
+    /// const float thetaSmoothStart = GfLerp(coneSoftness, thetaCutoff, 0.0f);
+    /// LScalar *= 1.0f - Smoothstep(thetaSmoothStart, thetaCutoff, thetaEmissionOffAxis);
     /// ```
     ///
     ///
@@ -302,7 +304,8 @@ public:
     /// An IES (Illumination Engineering Society) light
     /// profile describing the angular distribution of light.
     ///
-    /// See hdEmbree example plugin for reference implementation
+    /// See hdEmbree example plugin for reference implementation.
+    ///
     ///
     /// | ||
     /// | -- | -- |
@@ -326,7 +329,8 @@ public:
     // --------------------------------------------------------------------- //
     /// Rescales the angular distribution of the IES profile.
     ///
-    /// See hdEmbree example plugin for reference implementation
+    /// See hdEmbree example plugin for reference implementation.
+    ///
     ///
     /// | ||
     /// | -- | -- |
@@ -350,8 +354,9 @@ public:
     // --------------------------------------------------------------------- //
     /// Normalizes the IES profile so that it affects the shaping
     /// of the light while preserving the overall energy output.
-    /// 
-    /// See hdEmbree example plugin for reference implementation
+    ///
+    /// See hdEmbree example plugin for reference implementation.
+    ///
     ///
     /// | ||
     /// | -- | -- |

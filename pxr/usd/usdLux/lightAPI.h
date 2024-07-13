@@ -47,37 +47,39 @@ class SdfAssetPath;
 /// that should be treated as a light.
 ///
 /// <b>Quantities and Units</b>
-/// 
-/// Most renderers consuming OpenUSD today are RGB renderers, rather than spectral.
-/// Units in RGB renderers are tricky to define as each of the red, green and blue
-/// channels transported by the renderer represents the convolution of a spectral
-/// exposure distribution, e.g. CIE Illuminant D65, with a sensor response function, e.g.
-/// CIE 1931 x_bar. Thus the main quantity in an RGB renderer is neither radiance nor
-/// luminance, but "integrated radiance" or "tristimulus weight".
-/// 
-/// The emision of a default light with \c intensity 1 and \c color [1, 1, 1] is an 
-/// Illuminant D spectral power distribution with chromaticity matching the rendering 
-/// colour space white point, normalized such that a ray normally incident upon the 
-/// sensor with EV0 exposure settings will generate a pixel value of [1, 1, 1] in the 
-/// rendering colour space.
-/// 
-/// Given the above definition, that means that the luminance of said default light 
-/// will be 1 \a nit and its emission spectral radiance distribution is easily 
-/// computed by appropriate normalization.
+///
+/// Most renderers consuming OpenUSD today are RGB renderers, rather than
+/// spectral. Units in RGB renderers are tricky to define as each of the red,
+/// green and blue channels transported by the renderer represents the
+/// convolution of a spectral exposure distribution, e.g. CIE Illuminant D65,
+/// with a sensor response function, e.g. CIE 1931 x_bar. Thus the main quantity
+/// in an RGB renderer is neither radiance nor luminance, but "integrated
+/// radiance" or "tristimulus weight".
+///
+/// The emision of a default light with \c intensity 1 and \c color [1, 1, 1] is
+/// an Illuminant D spectral power distribution with chromaticity matching the
+/// rendering colour space white point, normalized such that a ray normally
+/// incident upon the sensor with EV0 exposure settings will generate a pixel
+/// value of [1, 1, 1] in the rendering colour space.
+///
+/// Given the above definition, that means that the luminance of said default
+/// light will be 1 \a nit and its emission spectral radiance distribution is
+/// easily computed by appropriate normalization.
 ///
 /// For brevity, the term \a emission will be used in the documentation to mean
-/// "emitted spectral radiance" or "emitted integrated radiance/tristimulus weight",
-/// as appropriate.
-/// 
-/// Note that some colour spaces, most notably ACES, define their white points by 
-/// chromaticity coordinates that do not exactly line up to any value of a standard illuminant. 
-/// In these cases, a spectral renderer should choose the closest Illuminant D spectrum
-/// for the lights' emission (the \a rendering \a illuminant) and perform chromatic 
-/// adaptation to transform the rendered image to the rendering colour space. 
-/// The method of "uplifting" an RGB colour to a spectral distribution is unspecified
-/// other than that it should round-trip under the rendering illuminant to the limits
-/// of numerical accuracy.
-/// 
+/// "emitted spectral radiance" or "emitted integrated radiance/tristimulus
+/// weight", as appropriate.
+///
+/// Note that some colour spaces, most notably ACES, define their white points
+/// by chromaticity coordinates that do not exactly line up to any value of a
+/// standard illuminant. In these cases, a spectral renderer should choose the
+/// closest Illuminant D spectrum for the lights' emission (the \a rendering
+/// \a illuminant) and perform chromatic adaptation to transform the rendered
+/// image to the rendering colour space. The method of "uplifting" an RGB colour
+/// to a spectral distribution is unspecified other than that it should
+/// round-trip under the rendering illuminant to the limits of numerical
+/// accuracy.
+///
 /// <b>Linking</b>
 ///
 /// Lights can be linked to geometry.  Linking controls which geometry
@@ -304,7 +306,7 @@ public:
     /// Expresses the "base", unmultiplied luminance emitted (L) of the light,
     /// in nits:
     ///
-    /// ```
+    /// ```C++
     /// LScalar = intensity;
     /// ```
     ///
@@ -314,6 +316,7 @@ public:
     /// pixel value of [1, 1, 1] in an RGB renderer, and thus have a luminance
     /// of 1 nit. A light with `intensity` 2 and `exposure` 0 would therefore
     /// have a luminance of 2 nits.
+    ///
     ///
     /// | ||
     /// | -- | -- |
@@ -339,7 +342,7 @@ public:
     /// of 2 (similar to an F-stop control over exposure).  The result
     /// is multiplied against the intensity:
     ///
-    /// ```
+    /// ```C++
     /// LScalar = LScalar * pow(2, exposure);
     /// ```
     ///
@@ -349,6 +352,7 @@ public:
     /// pixel value of [1, 1, 1] in an RGB renderer, and thus have a luminance
     /// of 1 nit. A light with `intensity` 1 and `exposure` 2 would therefore
     /// have a luminance of 4 nits.
+    ///
     ///
     /// | ||
     /// | -- | -- |
@@ -427,7 +431,7 @@ public:
     /// More precisely, this means that the luminance of the light will be
     /// divided by a factor representing the "size" of the light:
     ///
-    /// ```
+    /// ```C++
     /// LScalar = LScalar / sizeFactor;
     /// ```
     ///
@@ -438,7 +442,7 @@ public:
     /// **DomeLight / PortalLight:**
     /// For a dome light, this attribute is ignored:
     ///
-    /// ```
+    /// ```C++
     /// if (IsDomeLight(light)) {
     ///     sizeFactor = 1;
     /// }
@@ -456,7 +460,7 @@ public:
     /// - SphereLight
     /// - CylinderLight
     ///
-    /// ```
+    /// ```C++
     /// if (IsAreaLight(light)) {
     ///     sizeFactor = CalcWorldSpaceSurfaceArea(light);
     /// }
@@ -465,7 +469,7 @@ public:
     /// **DistantLight:**
     /// For distant lights, we use the following formula:
     ///
-    /// ```
+    /// ```C++
     /// if (IsDistantLight(light)) {
     ///     const float theta_max = (angle / 2) * M_PI / 180;
     ///     if (theta_max == 0) {
@@ -498,9 +502,12 @@ public:
     ///
     /// - [Normalizing Distant Lights - In Depth](@ref normdist)
     ///
-    /// | || | -- | -- | | Declaration | `bool inputs:normalize = 0` | | C++
-    /// Type | bool | | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Bool
-    /// |
+    ///
+    /// | ||
+    /// | -- | -- |
+    /// | Declaration | `bool inputs:normalize = 0` |
+    /// | C++ Type | bool |
+    /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Bool |
     USDLUX_API
     UsdAttribute GetNormalizeAttr() const;
 
@@ -519,12 +526,13 @@ public:
     /// The color of emitted light, in the rendering color space.
     ///
     /// This color is just multiplied with the emission. In the case of a spectral
-    /// renderer, this color should be uplifted such that it round-trips to within 
+    /// renderer, this color should be uplifted such that it round-trips to within
     /// the limit of numerical accuracy under the rendering illuminant.
     ///
     /// ```
     /// LColor = GfCompMult(color, LScalar);
     /// ```
+    ///
     ///
     /// | ||
     /// | -- | -- |
@@ -577,11 +585,13 @@ public:
     /// See UsdLuxBlackbodyTemperatureAsRgb().
     ///
     /// This is always calculated as an RGB color using a D65 white points, regardless
-    /// of the rendering color space, normalized such that the default value of 
-    /// 6500 will always result in white, and then should be transformed to the 
-    /// rendering color space. 
-    /// Spectral renderers should do the same and then uplift the resulting 
+    /// of the rendering color space, normalized such that the default value of
+    /// 6500 will always result in white, and then should be transformed to the
+    /// rendering color space.
+    ///
+    /// Spectral renderers should do the same and then uplift the resulting
     /// color after multiplying with the `color` attribute.
+    ///
     ///
     /// | ||
     /// | -- | -- |

@@ -146,6 +146,7 @@ public:
     /// if angle > 180. While this is valid, it is possible that for large
     /// angles a DomeLight may provide better performance.
     ///
+    ///
     /// | ||
     /// | -- | -- |
     /// | Declaration | `float inputs:angle = 0.53` |

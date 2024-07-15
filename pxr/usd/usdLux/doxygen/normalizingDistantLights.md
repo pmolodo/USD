@@ -1,4 +1,3 @@
-
 # Normalizing Distant Lights - In Depth                         {#normdist}
 
 Recall that when normalizing a light, we divide it's luminance, $L_V$,
@@ -108,9 +107,7 @@ $$
 $sizeFactor(\theta_{max}) = \pi \, sin^2(\theta_{max})$, then
 
 $$
-
     E_V = Intensity
-
 $$
 
 ---------------------------------------------------------------

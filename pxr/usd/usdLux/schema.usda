@@ -729,6 +729,23 @@ class "ShapingAPI" (
 
         https://store.ies.org/product/lm-63-19-approved-method-ies-standard-file-format-for-the-electronic-transfer-of-photometric-data-and-related-information/
 
+        The luminous intensity values in the ies profile are sampled using
+        the emission direction in the light's local space (after a mapping is
+        possibly by a non-zero shaping:ies:angleScale, see below). The sampled
+        value is then potentially normalized by the overal power of the profile
+        if shaping:ies:normalize is enabled, and then used as a scaling factor
+        on the returned luminance:
+
+        ```C++
+        const auto[lightTheta, phi] = ToPolarCoordinates(emissionDirectionInLightSpace);
+        const auto iesTheta = ApplyAngleScale(lightTheta, angleScale);
+        const auto iesSample = SampleIES(iesFile, iesTheta, phi);
+        if (iesNormalize) {
+            iesSample /= IesProfilePower(iesFile);
+        }
+        LeColor *= iesSample;
+        ```
+
         See the hdEmbree reference implementation for further details.
         """
         customData = {
@@ -749,17 +766,18 @@ class "ShapingAPI" (
 
         ```C++
         if (angleScale < 0) {
-            iesSampleTheta = Clamp(trueTheta / (1 - angleScale), 0, M_PI);
+            iesTheta = Clamp(lightTheta / (1 - angleScale), 0, M_PI);
         } else if (angleScale > 0) {
-            iesSampleTheta = Clamp(trueTheta / (1 / (1 + angleScale)), 0, M_PI);
+            iesTheta = Clamp(lightTheta / (1 / (1 + angleScale)), 0, M_PI);
         } else {
-            iesSampleTheta = trueTheta;
+            iesTheta = lightTheta;
         }
         ```
 
-        ...where `trueTheta` is the actual polar coordinate, and
-        `iesSampleTheta` is the value used when looking up luminous intensity
-        values in the ies profile.
+        ...where `lightTheta` is the latitudinal theta polar coordinate of
+        the emission direction in the light's local spacepolar coordinate, and
+        `iesTheta` is the value that will be used when actually sampling the
+        profile.
         """
         customData = {
             token apiName = "shaping:ies:angleScale"
@@ -771,7 +789,10 @@ class "ShapingAPI" (
         doc = """Normalizes the IES profile so that it affects the shaping
         of the light while preserving the overall energy output.
 
-        See hdEmbree example plugin for reference implementation.
+        The sampled luminous intensity is scaled by the overall power of the
+        ies profile if this is on, where the total power is calculated by
+        integrating the luminous intensity over all solid angle patches
+        defined in the profile.
         """
         customData = {
             token apiName = "shaping:ies:normalize"

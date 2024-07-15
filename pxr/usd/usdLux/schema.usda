@@ -724,7 +724,12 @@ class "ShapingAPI" (
         doc = """An IES (Illumination Engineering Society) light
         profile describing the angular distribution of light.
 
-        See hdEmbree example plugin for reference implementation.
+        For full details on the .ies file format, see the full specification,
+        ANSI/IES LM-63-19:
+
+        https://store.ies.org/product/lm-63-19-approved-method-ies-standard-file-format-for-the-electronic-transfer-of-photometric-data-and-related-information/
+
+        See the hdEmbree reference implementation for further details.
         """
         customData = {
             token apiName = "shaping:ies:file"
@@ -735,7 +740,26 @@ class "ShapingAPI" (
         displayName = "Profile Scale"
         doc = """Rescales the angular distribution of the IES profile.
 
-        See hdEmbree example plugin for reference implementation.
+        Applies a scaling factor to the latitudinal theta polar coordinate
+        before sampling the ies profile, to shift the samples more toward the
+        "top" or "bottom" of the profile.  Negative values decrease the
+        sampled ies theta, while positive values increase the ies theta.
+
+        Specifically, this factor is applied:
+
+        ```C++
+        if (angleScale < 0) {
+            iesSampleTheta = Clamp(trueTheta / (1 - angleScale), 0, M_PI);
+        } else if (angleScale > 0) {
+            iesSampleTheta = Clamp(trueTheta / (1 / (1 + angleScale)), 0, M_PI);
+        } else {
+            iesSampleTheta = trueTheta;
+        }
+        ```
+
+        ...where `trueTheta` is the actual polar coordinate, and
+        `iesSampleTheta` is the value used when looking up luminous intensity
+        values in the ies profile.
         """
         customData = {
             token apiName = "shaping:ies:angleScale"

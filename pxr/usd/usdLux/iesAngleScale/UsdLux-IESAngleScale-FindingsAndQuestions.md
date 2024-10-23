@@ -513,15 +513,23 @@ $$
 
 ![ies_angleScale_bimodal_clamped.jpg](ies_angleScale_bimodal_clamped.jpg)
 
-#### Bimodal: ies:angleScale from -2 to -2
+#### Bimodal: ies:angleScale from 0 to -2 (vAngle origin = 180 - "Renderman" like)
 
 
-| -2.00         | -1.50         | -1.00         | -0.50         | =0.00         | +0.50         | +1.00         | +1.50         | +2.00         |
+| =0.00         | -0.25         | -0.50         | -0.75         | -1.00         | -1.25         | -1.50         | -1.75         | -2.00         |
 | ------------- | ------------- | ------------- | ------------- | ------------- | ------------- | ------------- | ------------- | ------------- |
-| ![Bi-2.00_pre] | ![Bi-1.50_pre] | ![Bi-1.00_pre] | ![Bi-0.50_pre] | ![Bi=0.00_pre] | ![Bi+0.50_pre] | ![Bi+1.00_pre] | ![Bi+1.50_pre] | ![Bi+2.00_pre] |
-| ![Bi-2.00_tst] | ![Bi-1.50_tst] | ![Bi-1.00_tst] | ![Bi-0.50_tst] | ![Bi=0.00_tst] | ![Bi+0.50_tst] | ![Bi+1.00_tst] | ![Bi+1.50_tst] | ![Bi+2.00_tst] |
-| ![Bi-2.00_gph] | ![Bi-1.50_gph] | ![Bi-1.00_gph] | ![Bi-0.50_gph] | ![Bi=0.00_gph] | ![Bi+0.50_gph] | ![Bi+1.00_gph] | ![Bi+1.50_gph] | ![Bi+2.00_gph] |
+| ![Bi=0.00_pre] | ![Bi-0.25_pre] | ![Bi-0.50_pre] | ![Bi-0.75_pre] | ![Bi-1.00_pre] | ![Bi-1.25_pre] | ![Bi-1.50_pre] | ![Bi-1.75_pre] | ![Bi-2.00_pre] |
+| ![Bi=0.00_tst] | ![Bi-0.25_tst] | ![Bi-0.50_tst] | ![Bi-0.75_tst] | ![Bi-1.00_tst] | ![Bi-1.25_tst] | ![Bi-1.50_tst] | ![Bi-1.75_tst] | ![Bi-2.00_tst] |
+| ![Bi=0.00_gph] | ![Bi-0.25_gph] | ![Bi-0.50_gph] | ![Bi-0.75_gph] | ![Bi-1.00_gph] | ![Bi-1.25_gph] | ![Bi-1.50_gph] | ![Bi-1.75_gph] | ![Bi-2.00_gph] |
 
+
+#### Bimodal: ies:angleScale from 0 to 2 (vAngle origin = 0 - "Karma" like)
+
+| =0.00         | +0.25         | +0.50         | +0.75         | +1.00         | +1.25         | +1.50         | +1.75         | +2.00         |
+| ------------- | ------------- | ------------- | ------------- | ------------- | ------------- | ------------- | ------------- | ------------- |
+| ![Bi=0.00_pre] | ![Bi+0.25_pre] | ![Bi+0.50_pre] | ![Bi+0.75_pre] | ![Bi+1.00_pre] | ![Bi+1.25_pre] | ![Bi+1.50_pre] | ![Bi+1.75_pre] | ![Bi+2.00_pre] |
+| ![Bi=0.00_tst] | ![Bi+0.25_tst] | ![Bi+0.50_tst] | ![Bi+0.75_tst] | ![Bi+1.00_tst] | ![Bi+1.25_tst] | ![Bi+1.50_tst] | ![Bi+1.75_tst] | ![Bi+2.00_tst] |
+| ![Bi=0.00_gph] | ![Bi+0.25_gph] | ![Bi+0.50_gph] | ![Bi+0.75_gph] | ![Bi+1.00_gph] | ![Bi+1.25_gph] | ![Bi+1.50_gph] | ![Bi+1.75_gph] | ![Bi+2.00_gph] |
 
 
 Pros:
@@ -654,24 +662,42 @@ there may not be much demand for this level of control.
 [Ka+1.00_tst]: https://pmolodo.github.io/luxtest/img/iesTest-karma.0020.png
     'Karma +1.00 angleScale'
 
+
 [Bi-2.00_tst]: https://pmolodo.github.io/luxtest/img/iesTest-bimodal.0012.png
     'Bimodal -2.00 angleScale'
-[Bi-1.50_tst]: https://pmolodo.github.io/luxtest/img/iesTest-bimodal.0013.png
+[Bi-1.75_tst]: https://pmolodo.github.io/luxtest/img/iesTest-bimodal.0013.png
+    'Bimodal -1.75 angleScale'
+[Bi-1.50_tst]: https://pmolodo.github.io/luxtest/img/iesTest-bimodal.0014.png
     'Bimodal -1.50 angleScale'
-[Bi-1.00_tst]: https://pmolodo.github.io/luxtest/img/iesTest-bimodal.0014.png
+[Bi-1.25_tst]: https://pmolodo.github.io/luxtest/img/iesTest-bimodal.0015.png
+    'Bimodal -1.25 angleScale'
+[Bi-1.00_tst]: https://pmolodo.github.io/luxtest/img/iesTest-bimodal.0016.png
     'Bimodal -1.00 angleScale'
-[Bi-0.50_tst]: https://pmolodo.github.io/luxtest/img/iesTest-bimodal.0015.png
+[Bi-0.75_tst]: https://pmolodo.github.io/luxtest/img/iesTest-bimodal.0017.png
+    'Bimodal -0.75 angleScale'
+[Bi-0.50_tst]: https://pmolodo.github.io/luxtest/img/iesTest-bimodal.0018.png
     'Bimodal -0.50 angleScale'
-[Bi=0.00_tst]: https://pmolodo.github.io/luxtest/img/iesTest-bimodal.0016.png
+[Bi-0.25_tst]: https://pmolodo.github.io/luxtest/img/iesTest-bimodal.0019.png
+    'Bimodal -0.25 angleScale'
+[Bi=0.00_tst]: https://pmolodo.github.io/luxtest/img/iesTest-bimodal.0020.png
     'Bimodal =0.00 angleScale'
-[Bi+0.50_tst]: https://pmolodo.github.io/luxtest/img/iesTest-bimodal.0017.png
+[Bi+0.25_tst]: https://pmolodo.github.io/luxtest/img/iesTest-bimodal.0021.png
+    'Bimodal +0.25 angleScale'
+[Bi+0.50_tst]: https://pmolodo.github.io/luxtest/img/iesTest-bimodal.0022.png
     'Bimodal +0.50 angleScale'
-[Bi+1.00_tst]: https://pmolodo.github.io/luxtest/img/iesTest-bimodal.0018.png
+[Bi+0.75_tst]: https://pmolodo.github.io/luxtest/img/iesTest-bimodal.0023.png
+    'Bimodal +0.75 angleScale'
+[Bi+1.00_tst]: https://pmolodo.github.io/luxtest/img/iesTest-bimodal.0024.png
     'Bimodal +1.00 angleScale'
-[Bi+1.50_tst]: https://pmolodo.github.io/luxtest/img/iesTest-bimodal.0019.png
+[Bi+1.25_tst]: https://pmolodo.github.io/luxtest/img/iesTest-bimodal.0025.png
+    'Bimodal +1.25 angleScale'
+[Bi+1.50_tst]: https://pmolodo.github.io/luxtest/img/iesTest-bimodal.0026.png
     'Bimodal +1.50 angleScale'
-[Bi+2.00_tst]: https://pmolodo.github.io/luxtest/img/iesTest-bimodal.0020.png
+[Bi+1.75_tst]: https://pmolodo.github.io/luxtest/img/iesTest-bimodal.0027.png
+    'Bimodal +1.75 angleScale'
+[Bi+2.00_tst]: https://pmolodo.github.io/luxtest/img/iesTest-bimodal.0028.png
     'Bimodal +2.00 angleScale'
+
 
 <!--     iesLibPreview render images -->
 [RM-1.00_pre]: https://pmolodo.github.io/luxtest/img/iesLibPreview-ris.0012.png
@@ -714,22 +740,40 @@ there may not be much demand for this level of control.
 
 [Bi-2.00_pre]: https://pmolodo.github.io/luxtest/img/iesLibPreview-bimodal.0012.png
     'Bimodal -2.00 angleScale'
-[Bi-1.50_pre]: https://pmolodo.github.io/luxtest/img/iesLibPreview-bimodal.0013.png
+[Bi-1.75_pre]: https://pmolodo.github.io/luxtest/img/iesLibPreview-bimodal.0013.png
+    'Bimodal -1.75 angleScale'
+[Bi-1.50_pre]: https://pmolodo.github.io/luxtest/img/iesLibPreview-bimodal.0014.png
     'Bimodal -1.50 angleScale'
-[Bi-1.00_pre]: https://pmolodo.github.io/luxtest/img/iesLibPreview-bimodal.0014.png
+[Bi-1.25_pre]: https://pmolodo.github.io/luxtest/img/iesLibPreview-bimodal.0015.png
+    'Bimodal -1.25 angleScale'
+[Bi-1.00_pre]: https://pmolodo.github.io/luxtest/img/iesLibPreview-bimodal.0016.png
     'Bimodal -1.00 angleScale'
-[Bi-0.50_pre]: https://pmolodo.github.io/luxtest/img/iesLibPreview-bimodal.0015.png
+[Bi-0.75_pre]: https://pmolodo.github.io/luxtest/img/iesLibPreview-bimodal.0017.png
+    'Bimodal -0.75 angleScale'
+[Bi-0.50_pre]: https://pmolodo.github.io/luxtest/img/iesLibPreview-bimodal.0018.png
     'Bimodal -0.50 angleScale'
-[Bi=0.00_pre]: https://pmolodo.github.io/luxtest/img/iesLibPreview-bimodal.0016.png
+[Bi-0.25_pre]: https://pmolodo.github.io/luxtest/img/iesLibPreview-bimodal.0019.png
+    'Bimodal -0.25 angleScale'
+[Bi=0.00_pre]: https://pmolodo.github.io/luxtest/img/iesLibPreview-bimodal.0020.png
     'Bimodal =0.00 angleScale'
-[Bi+0.50_pre]: https://pmolodo.github.io/luxtest/img/iesLibPreview-bimodal.0017.png
+[Bi+0.25_pre]: https://pmolodo.github.io/luxtest/img/iesLibPreview-bimodal.0021.png
+    'Bimodal +0.25 angleScale'
+[Bi+0.50_pre]: https://pmolodo.github.io/luxtest/img/iesLibPreview-bimodal.0022.png
     'Bimodal +0.50 angleScale'
-[Bi+1.00_pre]: https://pmolodo.github.io/luxtest/img/iesLibPreview-bimodal.0028.png
+[Bi+0.75_pre]: https://pmolodo.github.io/luxtest/img/iesLibPreview-bimodal.0023.png
+    'Bimodal +0.75 angleScale'
+[Bi+1.00_pre]: https://pmolodo.github.io/luxtest/img/iesLibPreview-bimodal.0024.png
     'Bimodal +1.00 angleScale'
-[Bi+1.50_pre]: https://pmolodo.github.io/luxtest/img/iesLibPreview-bimodal.0019.png
+[Bi+1.25_pre]: https://pmolodo.github.io/luxtest/img/iesLibPreview-bimodal.0025.png
+    'Bimodal +1.25 angleScale'
+[Bi+1.50_pre]: https://pmolodo.github.io/luxtest/img/iesLibPreview-bimodal.0026.png
     'Bimodal +1.50 angleScale'
-[Bi+2.00_pre]: https://pmolodo.github.io/luxtest/img/iesLibPreview-bimodal.0020.png
+[Bi+1.75_pre]: https://pmolodo.github.io/luxtest/img/iesLibPreview-bimodal.0027.png
+    'Bimodal +1.75 angleScale'
+[Bi+2.00_pre]: https://pmolodo.github.io/luxtest/img/iesLibPreview-bimodal.0028.png
     'Bimodal +2.00 angleScale'
+
+
 
 <!--     angleScale formula graph images -->
 
@@ -754,11 +798,20 @@ there may not be much demand for this level of control.
 [Ka+1.00_gph]: ies_angleScale_Karma_clamped_+1.00.jpg
 
 [Bi-2.00_gph]: ies_angleScale_Bimodal_clamped_-2.00.jpg
+[Bi-1.75_gph]: ies_angleScale_Bimodal_clamped_-1.75.jpg
 [Bi-1.50_gph]: ies_angleScale_Bimodal_clamped_-1.50.jpg
+[Bi-1.25_gph]: ies_angleScale_Bimodal_clamped_-1.25.jpg
 [Bi-1.00_gph]: ies_angleScale_Bimodal_clamped_-1.00.jpg
+[Bi-0.75_gph]: ies_angleScale_Bimodal_clamped_-0.75.jpg
 [Bi-0.50_gph]: ies_angleScale_Bimodal_clamped_-0.50.jpg
+[Bi-0.25_gph]: ies_angleScale_Bimodal_clamped_-0.25.jpg
 [Bi=0.00_gph]: ies_angleScale_Bimodal_clamped_+0.00.jpg
+[Bi+0.25_gph]: ies_angleScale_Bimodal_clamped_+0.25.jpg
 [Bi+0.50_gph]: ies_angleScale_Bimodal_clamped_+0.50.jpg
+[Bi+0.75_gph]: ies_angleScale_Bimodal_clamped_+0.75.jpg
 [Bi+1.00_gph]: ies_angleScale_Bimodal_clamped_+1.00.jpg
+[Bi+1.25_gph]: ies_angleScale_Bimodal_clamped_+1.25.jpg
 [Bi+1.50_gph]: ies_angleScale_Bimodal_clamped_+1.50.jpg
+[Bi+1.75_gph]: ies_angleScale_Bimodal_clamped_+1.75.jpg
 [Bi+2.00_gph]: ies_angleScale_Bimodal_clamped_+2.00.jpg
+

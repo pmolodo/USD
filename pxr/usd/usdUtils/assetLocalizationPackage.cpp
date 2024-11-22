@@ -418,12 +418,23 @@ UsdUtils_AssetLocalizationPackage::_AddLayerToPackage(
                     UsdUsdFileFormat::GetUnderlyingFormatForLayer(
                         *get_pointer(layer));
         }
-        
-        const std::string tmpDirPath = ArchGetTmpDir();
-        std::string tmpLayerExportPath = TfStringCatPaths(tmpDirPath, 
-                TfGetBaseName(destPath));
-        layer->Export(tmpLayerExportPath, /*comment*/ "", args);
 
+        std::string tmpLayerExportPath;
+        if (ArchMakeTmpFile(
+                ArchStringPrintf("%s_assetLocalize", TfGetBaseName(destPath)),
+                &tmpLayerExportPath) == -1) {
+            // XXX: Should we abort package creation and return early here?
+            TF_WARN("Failed to create temporary file for modified layer '%s'",
+                    destPath.c_str());
+            return false;
+        }
+        if (!layer->Export(tmpLayerExportPath, /*comment*/ "", args)) {
+            // XXX: Should we abort package creation and return early here?
+            TF_WARN(
+                "Failed to export modified layer '%s' to temporary path '%s'",
+                destPath.c_str(), tmpLayerExportPath.c_str());
+            return false;
+        }
         if (!_WriteToPackage(tmpLayerExportPath, destPath)) {
             // XXX: Should we abort package creation and return early here?
             TF_WARN("Failed to add temporary layer at '%s' to the package "

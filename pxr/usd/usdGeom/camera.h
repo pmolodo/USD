@@ -1,25 +1,8 @@
 //
 // Copyright 2016 Pixar
 //
-// Licensed under the Apache License, Version 2.0 (the "Apache License")
-// with the following modification; you may not use this file except in
-// compliance with the Apache License and the following modification to it:
-// Section 6. Trademarks. is deleted and replaced with:
-//
-// 6. Trademarks. This License does not grant permission to use the trade
-//    names, trademarks, service marks, or product names of the Licensor
-//    and its affiliates, except as required to comply with Section 4(c) of
-//    the License and to reproduce the content of the NOTICE file.
-//
-// You may obtain a copy of the Apache License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the Apache License with the above modification is
-// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-// KIND, either express or implied. See the Apache License for the specific
-// language governing permissions and limitations under the Apache License.
+// Licensed under the terms set forth in the LICENSE.txt file available at
+// https://openusd.org/license.
 //
 #ifndef USDGEOM_GENERATED_CAMERA_H
 #define USDGEOM_GENERATED_CAMERA_H
@@ -73,11 +56,10 @@ class SdfAssetPath;
 /// \endcode
 /// \note
 /// <b>Cameras in USD are always "Y up", regardless of the stage's orientation
-/// (i.e. UsdGeomGetStageUpAxis()).</b>  This means that the inverse of 
-/// 'camXform' (the VIEW half of the <A HREF="http://www.glprogramming.com/red/chapter03.html#name2">MODELVIEW transform in OpenGL parlance</A>) 
-/// will transform the world such that the camera is at the origin, looking 
-/// down the -Z axis, with +Y as the up axis, and +X pointing to the right.
-/// This describes a __right handed coordinate system__. 
+/// (i.e. UsdGeomGetStageUpAxis()).</b> 'camXform' positions the camera in the 
+/// world, and the inverse transforms the world such that the camera is at the 
+/// origin, looking down the -Z axis, with +Y as the up axis, and +X pointing to 
+/// the right. This describes a __right handed coordinate system__. 
 /// 
 /// \section UsdGeom_CameraUnits Units of Measure for Camera Properties
 /// 
@@ -104,36 +86,37 @@ class SdfAssetPath;
 /// UsdGeomCamera models exposure by a camera in terms of exposure time, ISO,
 /// f-stop, and exposure compensation, mirroring the controls on a real camera.
 /// These parameters are provided by \ref UsdGeomCamera::GetExposureTimeAttr(),
-/// \ref UsdGeomCamera::GetExposureIsoAttr(), \ref UsdGeomCamera::GetExposureFStopAttr(), 
+/// \ref UsdGeomCamera::GetExposureIsoAttr(),
+/// \ref UsdGeomCamera::GetExposureFStopAttr(), 
 /// and \ref UsdGeomCamera::GetExposureAttr(), respectively. 
-/// \ref UsdGeomCamera::GetExposureResponsivityAttr() provides an additional scaling
-/// factor to model the overall responsivity of the system, including response of 
-/// the sensor and loss by the lens.
+/// \ref UsdGeomCamera::GetExposureResponsivityAttr() provides an additional
+/// scaling factor to model the overall responsivity of the system,
+/// including response of the sensor and loss by the lens.
 /// 
 /// The calculated scaling factor can be obtained from 
-/// \ref UsdGeomCamera::GetExposureScale(), which is also the value provided by 
-/// \ref HdCamera::GetExposure(). It is computed as:
+/// \ref UsdGeomCamera::ComputeLinearExposureScale(). It is computed as:
 /// \code
-/// exposureScale = exposureResponsivity * 
+/// linearExposureScale = exposureResponsivity * 
 /// (exposureTime * (exposureIso/100) * pow(2, exposure)) 
 /// / (exposureFStop * exposureFStop)
 /// \endcode
 /// 
-/// This scaling factor is combined from two parts: The first, known as the __imaging ratio__ 
-/// (in _steradian-second_), converts from incident luminance at the front 
-/// of the lens system, in _nit_ (_cd/m^2_), to photometric exposure at the sensor
-/// in _lux-second_. The second, `exposureResponsivity` 
-/// (in _inverse lux-second_), converts from photometric exposure at the sensor, in _lux-second_,
-/// to a unitless output signal.
+/// This scaling factor is combined from two parts: The first, known as the
+/// __imaging ratio__ (in _steradian-second_), converts from incident luminance
+/// at the front of the lens system, in _nit_ (_cd/m^2_), to photometric
+/// exposure at the sensor in _lux-second_. The second, `exposureResponsivity` 
+/// (in _inverse lux-second_), converts from photometric exposure at the sensor,
+/// in _lux-second_, to a unitless output signal.
 /// 
-/// For a thorough treatment of this topic, see https://github.com/wetadigital/physlight/blob/main/docs/physLight-v1.3-1bdb6ec3-20230805.pdf,
+/// For a thorough treatment of this topic, see
+/// https://github.com/wetadigital/physlight/blob/main/docs/physLight-v1.3-1bdb6ec3-20230805.pdf,
 /// Section 2.2. Note that we are essentially implementing Equation 2.7, but are 
-/// choosing C such that it exactly cancels with the factor of pi in the numerator,
-/// replacing it with a responsivity factor that defaults to 1.
+/// choosing C such that it exactly cancels with the factor of pi in the
+/// numerator, replacing it with a responsivity factor that defaults to 1.
 /// 
 /// Renderers should simply multiply the brightness of the image by the exposure 
-/// scale. The default values for the exposure-related attributes combine to give
-/// a scale of 1.0.
+/// scale. The default values for the exposure-related attributes combine to
+/// give a scale of 1.0.
 /// 
 /// \sa \ref UsdGeom_LinAlgBasics
 /// 
@@ -714,16 +697,16 @@ public:
 
     /// Computes the ratio between incident luminance and photometric exposure 
     /// (in lux-seconds), given the <tt>exposure</tt>, <tt>exposure:iso</tt>, 
-    /// <tt>exposure:fnumber</tt>, <tt>exposure:time</tt> and <tt>exposure:responsivity</tt> 
-    /// attributes.
+    /// <tt>exposure:fnumber</tt>, <tt>exposure:time</tt> and
+    /// <tt>exposure:responsivity</tt> attributes.
     ///
     /// This is expected to be applied as a multiplier to the brightness of the 
-    /// image generated by the renderer, and given physically meaningful lighting
-    /// values in the scene, allows the exposure controls on UsdGeomCamera to behave
-    /// like those of a real camera.
+    /// image generated by the renderer, and given physically meaningful
+    /// lighting values in the scene, allows the exposure controls on
+    /// UsdGeomCamera to behave like those of a real camera.
     ///
     USDGEOM_API
-    float GetExposureScale(UsdTimeCode time=UsdTimeCode::Default()) const;
+    float ComputeLinearExposureScale(UsdTimeCode time=UsdTimeCode::Default()) const;
 };
 
 PXR_NAMESPACE_CLOSE_SCOPE

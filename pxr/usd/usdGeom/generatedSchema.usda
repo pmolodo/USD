@@ -4199,14 +4199,14 @@ class Camera "Camera" (
     f-stop, and exposure compensation, mirroring the controls on a real camera.
     These parameters are provided by \\ref UsdGeomCamera::GetExposureTimeAttr(),
     \\ref UsdGeomCamera::GetExposureIsoAttr(),
-    
-    and respectively. 
-    provides an additional
+    \\ref UsdGeomCamera::GetExposureFStopAttr(),
+    and \\ref UsdGeomCamera::GetExposureAttr(), respectively.
+    \\ref UsdGeomCamera::GetExposureResponsivityAttr() provides an additional
     scaling factor to model the overall responsivity of the system,
     including response of the sensor and loss by the lens.
 
-    The calculated scaling factor can be obtained from 
-    It is computed as:
+    The calculated scaling factor can be obtained from
+    \\ref UsdGeomCamera::ComputeLinearExposureScale(). It is computed as:
     \\code
         linearExposureScale = exposureResponsivity * 
             (exposureTime * (exposureIso/100) * pow(2, exposure)) 

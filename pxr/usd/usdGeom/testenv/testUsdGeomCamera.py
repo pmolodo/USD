@@ -138,7 +138,7 @@ class TestUsdGeomCamera(unittest.TestCase):
         self.assertEqual(usdCamera.GetHorizontalApertureAttr().Get(1.0), 500.0)
         self.assertEqual(usdCamera.ComputeLocalToWorldTransform(1.0), newXform)
 
-    def test_GetExposureScale(self):
+    def test_ComputeLinearExposureScale(self):
         stage = Usd.Stage.Open("layers_a_b.usda")
         layerA = Sdf.Layer.FindOrOpen("a.usda")
         layerB = Sdf.Layer.FindOrOpen("b.usda")
@@ -146,7 +146,7 @@ class TestUsdGeomCamera(unittest.TestCase):
 
         usdCamera = UsdGeom.Camera.Define(stage, '/camera')
 
-        self.assertAlmostEqual(usdCamera.GetExposureScale(), 0.015, places=3)
+        self.assertAlmostEqual(usdCamera.ComputeLinearExposureScale(), 0.015, places=3)
 
         usdCamera.GetExposureAttr().Set(0.0)
         usdCamera.GetExposureTimeAttr().Set(1.0)
@@ -154,7 +154,7 @@ class TestUsdGeomCamera(unittest.TestCase):
         usdCamera.GetExposureIsoAttr().Set(100.0)
         usdCamera.GetExposureResponsivityAttr().Set(1.0)
 
-        self.assertAlmostEqual(usdCamera.GetExposureScale(), 1.0, places=3)
+        self.assertAlmostEqual(usdCamera.ComputeLinearExposureScale(), 1.0, places=3)
 
 
 

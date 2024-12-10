@@ -1,25 +1,8 @@
 //
 // Copyright 2016 Pixar
 //
-// Licensed under the Apache License, Version 2.0 (the "Apache License")
-// with the following modification; you may not use this file except in
-// compliance with the Apache License and the following modification to it:
-// Section 6. Trademarks. is deleted and replaced with:
-//
-// 6. Trademarks. This License does not grant permission to use the trade
-//    names, trademarks, service marks, or product names of the Licensor
-//    and its affiliates, except as required to comply with Section 4(c) of
-//    the License and to reproduce the content of the NOTICE file.
-//
-// You may obtain a copy of the Apache License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the Apache License with the above modification is
-// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-// KIND, either express or implied. See the Apache License for the specific
-// language governing permissions and limitations under the Apache License.
+// Licensed under the terms set forth in the LICENSE.txt file available at
+// https://openusd.org/license.
 //
 
 /// \file usdImagingGL/engine.h
@@ -333,6 +316,8 @@ public:
     /// of that gprim. For nested instancing, outHitInstancerPath points to
     /// the closest instancer.
     ///
+    /// \deprecated Please use the override of TestIntersection that takes
+    /// PickParams and returns an IntersectionResultVector instead!
     USDIMAGINGGL_API
     bool TestIntersection(
         const GfMatrix4d &viewMatrix,
@@ -346,12 +331,70 @@ public:
         int *outHitInstanceIndex = NULL,
         HdInstancerContext *outInstancerContext = NULL);
 
+    // Pick result
+    struct IntersectionResult
+    {
+        GfVec3d hitPoint;
+        GfVec3d hitNormal;
+        SdfPath hitPrimPath;
+        SdfPath hitInstancerPath;
+        int hitInstanceIndex;
+        HdInstancerContext instancerContext;
+    };
+
+    typedef std::vector<struct IntersectionResult> IntersectionResultVector;
+
+    // Pick params
+    struct PickParams
+    {
+        TfToken resolveMode;
+    };
+
+    /// Perform picking by finding the intersection of objects in the scene with a renderered frustum.
+    /// Depending on the resolve mode it may find all objects intersecting the frustum or the closest 
+    /// point of intersection within the frustum.
+    /// 
+    /// If resolve mode is set to resolveDeep it uses Deep Selection to gather all paths within 
+    /// the frustum even if obscured by other visible objects.
+    /// If resolve mode is set to resolveNearestToCenter it uses a PickRender and 
+    /// a customized depth buffer to find all approximate points of intersection by rendering. 
+    /// This is less accurate than implicit methods or rendering with GL_SELECT, but leverages any 
+    /// data already cached in the renderer.
+    ///
+    /// Returns whether a hit occurred and if so, \p outResults will point to all the 
+    /// gprims selected by the pick as determined by the resolve mode. 
+    /// \p outHitPoint will contain the intersection point in world space 
+    /// (i.e. \p projectionMatrix and \p viewMatrix factored back out of the result)
+    /// \p outHitNormal will contain the world space normal at that point.
+    /// \p hitPrimPath will point to the gprim selected by the pick.
+    /// \p hitInstancerPath will point to the point instancer (if applicable) of each gprim. 
+    ///
+    USDIMAGINGGL_API
+    bool TestIntersection(
+        const PickParams& pickParams,
+        const GfMatrix4d& viewMatrix,
+        const GfMatrix4d& projectionMatrix,
+        const UsdPrim& root,
+        const UsdImagingGLRenderParams& params,
+        IntersectionResultVector* outResults);
+
     /// Decodes a pick result given hydra prim ID/instance ID (like you'd get
-    /// from an ID render).
+    /// from an ID render), where ID is represented as a vec4 color.
     USDIMAGINGGL_API
     bool DecodeIntersection(
         unsigned char const primIdColor[4],
         unsigned char const instanceIdColor[4],
+        SdfPath *outHitPrimPath = NULL,
+        SdfPath *outHitInstancerPath = NULL,
+        int *outHitInstanceIndex = NULL,
+        HdInstancerContext *outInstancerContext = NULL);
+
+    /// Decodes a pick result given hydra prim ID/instance ID (like you'd get
+    /// from an ID render), where ID is represented as a int.
+    USDIMAGINGGL_API
+    bool DecodeIntersection(
+        int primIdx,
+        int instanceIdx,
         SdfPath *outHitPrimPath = NULL,
         SdfPath *outHitInstancerPath = NULL,
         int *outHitInstanceIndex = NULL,
@@ -399,6 +442,10 @@ public:
     /// Set the current renderer AOV to \p id.
     USDIMAGINGGL_API
     bool SetRendererAov(TfToken const& id);
+
+    /// Set the current renderer AOVs to a list of \p ids.
+    USDIMAGINGGL_API
+    bool SetRendererAovs(TfTokenVector const &ids);
 
     /// Returns an AOV texture handle for the given token.
     USDIMAGINGGL_API
@@ -632,6 +679,9 @@ protected:
 
     USDIMAGINGGL_API
     void _SetActiveRenderSettingsPrimFromStageMetadata(UsdStageWeakPtr stage);
+
+    USDIMAGINGGL_API
+    void _SetSceneGlobalsCurrentFrame(UsdTimeCode const &time);
 
     USDIMAGINGGL_API
     void _UpdateDomeLightCameraVisibility();

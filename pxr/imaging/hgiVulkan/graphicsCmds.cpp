@@ -1,25 +1,8 @@
 //
 // Copyright 2020 Pixar
 //
-// Licensed under the Apache License, Version 2.0 (the "Apache License")
-// with the following modification; you may not use this file except in
-// compliance with the Apache License and the following modification to it:
-// Section 6. Trademarks. is deleted and replaced with:
-//
-// 6. Trademarks. This License does not grant permission to use the trade
-//    names, trademarks, service marks, or product names of the Licensor
-//    and its affiliates, except as required to comply with Section 4(c) of
-//    the License and to reproduce the content of the NOTICE file.
-//
-// You may obtain a copy of the Apache License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the Apache License with the above modification is
-// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-// KIND, either express or implied. See the Apache License for the specific
-// language governing permissions and limitations under the Apache License.
+// Licensed under the terms set forth in the LICENSE.txt file available at
+// https://openusd.org/license.
 //
 #include "pxr/imaging/hgi/graphicsCmdsDesc.h"
 #include "pxr/imaging/hgiVulkan/buffer.h"
@@ -35,6 +18,16 @@
 #include "pxr/imaging/hgiVulkan/texture.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
+
+static
+bool
+_IsInt32Format(HgiFormat format)
+{
+    return (format == HgiFormatInt32) ||
+           (format == HgiFormatInt32Vec2) ||
+           (format == HgiFormatInt32Vec3) ||
+           (format == HgiFormatInt32Vec4);
+}
 
 HgiVulkanGraphicsCmds::HgiVulkanGraphicsCmds(
     HgiVulkan* hgi,
@@ -55,10 +48,19 @@ HgiVulkanGraphicsCmds::HgiVulkanGraphicsCmds(
     for (HgiAttachmentDesc const& attachmentDesc :
         _descriptor.colorAttachmentDescs) {
         VkClearValue vkClearValue;
-        vkClearValue.color.float32[0] = attachmentDesc.clearValue[0];
-        vkClearValue.color.float32[1] = attachmentDesc.clearValue[1];
-        vkClearValue.color.float32[2] = attachmentDesc.clearValue[2];
-        vkClearValue.color.float32[3] = attachmentDesc.clearValue[3];
+
+        // Special handling for int format used by id renders.
+        if (_IsInt32Format(attachmentDesc.format)) {
+            vkClearValue.color.int32[0] = attachmentDesc.clearValue[0];
+            vkClearValue.color.int32[1] = attachmentDesc.clearValue[1];
+            vkClearValue.color.int32[2] = attachmentDesc.clearValue[2];
+            vkClearValue.color.int32[3] = attachmentDesc.clearValue[3];
+        } else {
+            vkClearValue.color.float32[0] = attachmentDesc.clearValue[0];
+            vkClearValue.color.float32[1] = attachmentDesc.clearValue[1];
+            vkClearValue.color.float32[2] = attachmentDesc.clearValue[2];
+            vkClearValue.color.float32[3] = attachmentDesc.clearValue[3];
+        }
         _vkClearValues.push_back(vkClearValue);
     }
 
@@ -101,32 +103,41 @@ HgiVulkanGraphicsCmds::SetViewport(GfVec4i const& vp)
     // Delay until the pipeline is set and the render pass has begun.
     _pendingUpdates.push_back(
         [this, vp] {
-            float offsetX = (float) vp[0];
-            float offsetY = (float) vp[1];
-            float width = (float) vp[2];
-            float height = (float) vp[3];
+            const float offsetX = (float) vp[0];
+            const float offsetY = (float) vp[1];
+            const float width = (float) vp[2];
+            const float height = (float) vp[3];
 
-            // Flip viewport in Y-axis, because the vertex.y position is flipped
-            // between opengl and vulkan. This also moves origin to bottom-left.
-            // Requires VK_KHR_maintenance1 extension.
-
-            // Alternatives are:
-            // 1. Multiply projection by 'inverted Y and half Z' matrix:
-            //    const GfMatrix4d clip(
-            //        1.0,  0.0, 0.0, 0.0,
-            //        0.0, -1.0, 0.0, 0.0,
-            //        0.0,  0.0, 0.5, 0.0,
-            //        0.0,  0.0, 0.5, 1.0);
-            //    projection = clip * projection;
+            // Though we continue to use an OpenGL-style projection matrix in 
+            // Storm, we choose not to flip the viewport here.
+            // We instead WANT to render an upside down image, as this makes 
+            // the handling of clip-space and downstream coordinate system 
+            // differences betwen Vulkan and OpenGL easier.
             //
-            // 2. Adjust vertex position:
-            //    gl_Position.z = (gl_Position.z + gl_Position.w) / 2.0;
-
+            // For example, since framebuffers in Vulkan are y-down (versus y-up
+            // for OpenGL by default), sampling (0,0) from an AOV texture in 
+            // the shader will grab from the top left of the texture in Vulkan
+            // (versus bottom left in GL). But since we rendered the Vulkan 
+            // image upside down, this ends up being the same texel value as it 
+            // would've been for GL.
+            // Vulkan-GL differences between the value of gl_FragCoord.y and 
+            // the sign of screenspace derivatives w.r.t. to y are resolved 
+            // similarly.
+            // Rendering Vulkan upside down also means we can also flip AOVs
+            // when writing them to file as we currently do for OpenGL and get 
+            // the correct result for Vulkan, too.
+            //
+            // We do however flip the winding order for Vulkan, as otherwise
+            // the rendered geometry would be both upside down AND facing 
+            // the wrong way, as Vulkan clip-space is right-handed while
+            // OpenGL's is left-handed. This happens in 
+            // hgiVulkan/conversions.cpp and hgiVulkan/shaderGenerator.cpp.
+            //
             VkViewport viewport;
             viewport.x = offsetX;
-            viewport.y = offsetY + height;
+            viewport.y = offsetY;
             viewport.width = width;
-            viewport.height = -height;
+            viewport.height = height;
             viewport.minDepth = 0.0f;
             viewport.maxDepth = 1.0f;
 

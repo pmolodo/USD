@@ -1,25 +1,8 @@
 //
 // Copyright 2016 Pixar
 //
-// Licensed under the Apache License, Version 2.0 (the "Apache License")
-// with the following modification; you may not use this file except in
-// compliance with the Apache License and the following modification to it:
-// Section 6. Trademarks. is deleted and replaced with:
-//
-// 6. Trademarks. This License does not grant permission to use the trade
-//    names, trademarks, service marks, or product names of the Licensor
-//    and its affiliates, except as required to comply with Section 4(c) of
-//    the License and to reproduce the content of the NOTICE file.
-//
-// You may obtain a copy of the Apache License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the Apache License with the above modification is
-// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-// KIND, either express or implied. See the Apache License for the specific
-// language governing permissions and limitations under the Apache License.
+// Licensed under the terms set forth in the LICENSE.txt file available at
+// https://openusd.org/license.
 //
 #ifndef PXR_USD_USD_STAGE_H
 #define PXR_USD_USD_STAGE_H
@@ -39,6 +22,7 @@
 
 #include "pxr/base/tf/declarePtrs.h"
 #include "pxr/base/tf/hashmap.h"
+#include "pxr/base/tf/type.h"
 #include "pxr/base/tf/weakBase.h"
 
 #include "pxr/usd/ar/ar.h"
@@ -68,6 +52,7 @@ PXR_NAMESPACE_OPEN_SCOPE
 class ArResolverContext;
 class GfInterval;
 class SdfAbstractDataValue;
+class TsSpline;
 class Usd_AssetPathContext;
 class Usd_ClipCache;
 class Usd_InstanceCache;
@@ -1019,7 +1004,11 @@ public:
     std::string
     ResolveIdentifierToEditTarget(std::string const &identifier) const;
 
-    /// Return this stage's local layers in strong-to-weak order.  If
+    /// Return a PcpErrorVector containing all composition errors encountered 
+    /// when composing the prims and layer stacks on this stage.
+    USD_API
+    PcpErrorVector GetCompositionErrors() const;
+
     /// \a includeSessionLayers is true, return the linearized strong-to-weak
     /// sublayers rooted at the stage's session layer followed by the linearized
     /// strong-to-weak sublayers rooted at this stage's root layer.  If
@@ -1743,6 +1732,7 @@ private:
             std::is_same<T, SdfPathExpression>::value ||
             std::is_same<T, VtArray<SdfPathExpression>>::value ||
             std::is_same<T, SdfTimeSampleMap>::value ||
+            std::is_same<T, TsSpline>::value ||
             std::is_same<T, VtDictionary>::value;
     };
 
@@ -1766,6 +1756,9 @@ private:
     template <class T>
     bool _SetEditTargetMappedValue(
         UsdTimeCode time, const UsdAttribute &attr, const T &newValue);
+
+    TfType _GetAttributeValueType(
+        const UsdAttribute &attr) const;
 
     template <class T>
     bool _SetValueImpl(
@@ -1908,8 +1901,13 @@ private:
     // Returns the path of the Usd prim using the prim index at the given path.
     SdfPath _GetPrimPathUsingPrimIndexAtPath(const SdfPath& primIndexPath) const;
 
-    // Update stage contents in response to changes in scene description.
+    // Responds to LayersDidChangeSentPerLayer event and update stage contents 
+    // in response to changes in scene description.
     void _HandleLayersDidChange(const SdfNotice::LayersDidChangeSentPerLayer &);
+
+    // Pushes changes through PCP to determine invalidation based on 
+    // composition metadata.
+    void _ProcessChangeLists(const SdfLayerChangeListVec &);
 
     // Update stage contents in response to changes to the asset resolver.
     void _HandleResolverDidChange(const ArNotice::ResolverChanged &);
@@ -2028,6 +2026,7 @@ public:
             std::is_same<T, SdfPathExpression>::value ||
             std::is_same<T, VtArray<SdfPathExpression>>::value ||
             std::is_same<T, SdfTimeSampleMap>::value ||
+            std::is_same<T, TsSpline>::value ||
             std::is_same<T, VtDictionary>::value;
     };
 
@@ -2363,6 +2362,7 @@ private:
     friend class UsdAttributeQuery;
     friend class UsdEditTarget;
     friend class UsdInherits;
+    friend class UsdNamespaceEditor;
     friend class UsdObject;
     friend class UsdPrim;
     friend class UsdProperty;
@@ -2375,6 +2375,7 @@ private:
     friend class Usd_PcpCacheAccess;
     friend class Usd_PrimData;
     friend class Usd_StageOpenRequest;
+    friend class Usd_TypeQueryAccess;
     template <class T> friend struct Usd_AttrGetValueHelper;
     friend struct Usd_AttrGetUntypedValueHelper;
     template <class RefsOrPayloadsEditorType, class RefsOrPayloadsProxyType> 

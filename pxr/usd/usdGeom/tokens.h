@@ -557,6 +557,10 @@ struct UsdGeomTokensType {
     /// 
     /// UsdGeomPointInstancer
     const TfToken scales;
+    /// \brief "segment"
+    /// 
+    /// Possible value for UsdGeomSubset::GetElementTypeAttr()
+    const TfToken segment;
     /// \brief "shutter:close"
     /// 
     /// UsdGeomCamera

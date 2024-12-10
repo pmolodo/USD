@@ -2,25 +2,8 @@
 #
 # Copyright 2017 Pixar
 #
-# Licensed under the Apache License, Version 2.0 (the "Apache License")
-# with the following modification; you may not use this file except in
-# compliance with the Apache License and the following modification to it:
-# Section 6. Trademarks. is deleted and replaced with:
-#
-# 6. Trademarks. This License does not grant permission to use the trade
-#    names, trademarks, service marks, or product names of the Licensor
-#    and its affiliates, except as required to comply with Section 4(c) of
-#    the License and to reproduce the content of the NOTICE file.
-#
-# You may obtain a copy of the Apache License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the Apache License with the above modification is
-# distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-# KIND, either express or implied. See the Apache License for the specific
-# language governing permissions and limitations under the Apache License.
+# Licensed under the terms set forth in the LICENSE.txt file available at
+# https://openusd.org/license.
 
 import os, platform, itertools, sys, unittest
 
@@ -130,6 +113,21 @@ class TestSdfLayer(unittest.TestCase):
         # historical.
         with self.assertRaises(Tf.ErrorException):
             l = Sdf.Layer.OpenAsAnonymous('foo.invalid')
+
+    def test_OpenWithThrownException(self):
+        fileFormat = Sdf.FileFormat.FindByExtension(".testexception")
+        self.assertTrue(fileFormat)
+
+        layer = Sdf.Layer.CreateAnonymous()
+        layer.Export("test.testexception")
+
+        with self.assertRaises(Tf.ErrorException):
+            l = Sdf.Layer.FindOrOpen('test.testexception')
+            self.assertIsNone(l)
+        
+        with self.assertRaises(Tf.ErrorException):
+            l = Sdf.Layer.OpenAsAnonymous('test.testexception')
+            self.assertIsNone(l)
 
     def test_FindWithAnonymousIdentifier(self):
         def _TestWithTag(tag):
@@ -774,6 +772,76 @@ def "Root"
         # New variant names use prepend
         self.assertTrue('x' in rootSpec.variantSetNameList.prependedItems)
         self.assertTrue(len(rootSpec.variantSetNameList.addedItems) == 0)
+
+    def test_CreatePropertyInLayer(self):
+        layer = Sdf.Layer.CreateAnonymous()
+
+        # Test creating attribute in layer
+        attr = Sdf.CreatePrimAttributeInLayer(layer=layer,
+            attrPath='/prim.attr', typeName=Sdf.ValueTypeNames.Float)
+        self.assertEqual(attr.name, "attr")
+        prim = layer.GetPrimAtPath('/prim')
+        self.assertEqual(attr.owner, prim)
+        self.assertTrue(attr in prim.properties)
+        self.assertEqual(attr.variability, Sdf.VariabilityVarying)
+        self.assertEqual(attr.custom, False)
+
+        # Test creating attribute (no handle) in layer
+        self.assertTrue(Sdf.JustCreatePrimAttributeInLayer(
+            layer=layer, attrPath='/just/an.attributeSpec',
+            typeName=Sdf.ValueTypeNames.Float))
+        attr2 = layer.GetAttributeAtPath('/just/an.attributeSpec')
+        self.assertEqual(attr2.name, 'attributeSpec')
+        self.assertEqual(attr2.typeName, Sdf.ValueTypeNames.Float)
+        prim = layer.GetPrimAtPath('/just/an')
+        self.assertEqual(attr2.owner, prim)
+        self.assertTrue(attr2 in prim.properties)
+        self.assertTrue(attr2.name in prim.properties)
+        self.assertEqual(prim.properties[0], attr2)
+        self.assertEqual(prim.properties[attr2.name], attr2)
+        self.assertEqual(attr2.variability, Sdf.VariabilityVarying)
+        self.assertEqual(prim.properties[0].custom, False)
+
+        self.assertTrue(Sdf.JustCreatePrimAttributeInLayer(
+            layer=layer, attrPath='/just/another.attributeSpec',
+            typeName=Sdf.ValueTypeNames.Int,
+            variability=Sdf.VariabilityUniform,
+            isCustom=True))
+        attr3 = layer.GetAttributeAtPath('/just/another.attributeSpec')
+        self.assertEqual(attr3.name, 'attributeSpec')
+        self.assertEqual(attr3.typeName, Sdf.ValueTypeNames.Int)
+        prim = layer.GetPrimAtPath('/just/another')
+        self.assertEqual(attr3.owner, prim)
+        self.assertTrue(attr3 in prim.properties)
+        self.assertTrue(attr3.name in prim.properties)
+        self.assertEqual(prim.properties[0], attr3)
+        self.assertEqual(prim.properties[attr2.name], attr3)
+        self.assertEqual(attr3.variability, Sdf.VariabilityUniform)
+        self.assertEqual(prim.properties[0].custom, True)
+
+        # Test creating relationship in layer
+        rel = Sdf.CreateRelationshipInLayer(layer=layer,
+            relPath='/prim.rel')
+        self.assertEqual(rel.name, "rel")
+        prim = layer.GetPrimAtPath('/prim')
+        self.assertEqual(rel.owner, prim)
+        self.assertTrue(rel in prim.properties)
+        self.assertEqual(rel.variability, Sdf.VariabilityVarying)
+        self.assertEqual(rel.custom, False)
+
+        # Test creating relationship (no handle) in layer
+        self.assertTrue(Sdf.JustCreateRelationshipInLayer(layer=layer,
+            relPath="/just/prim.rel"))
+        rel2 = layer.GetRelationshipAtPath('/just/prim.rel')
+        self.assertEqual(rel2.name, 'rel')
+        prim = layer.GetPrimAtPath('/just/prim')
+        self.assertEqual(rel2.owner, prim)
+        self.assertTrue(rel2 in prim.properties)
+        self.assertTrue(rel2.name in prim.properties)
+        self.assertEqual(prim.properties[0], rel2)
+        self.assertEqual(prim.properties[rel2.name], rel2)
+        self.assertEqual(rel2.variability, Sdf.VariabilityVarying)
+        self.assertEqual(prim.properties[0].custom, False)
 
     def test_ReloadAfterSetIdentifier(self):
         layer = Sdf.Layer.CreateNew('TestReloadAfterSetIdentifier.sdf')

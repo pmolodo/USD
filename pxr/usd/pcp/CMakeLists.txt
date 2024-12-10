@@ -9,11 +9,9 @@ pxr_library(pcp
         sdf
         work
         ar
-        ${Boost_PYTHON_LIBRARY}
         ${TBB_tbb_LIBRARY}
 
     INCLUDE_DIRS
-        ${Boost_INCLUDE_DIRS}
         ${TBB_INCLUDE_DIRS}
         
     PUBLIC_HEADERS
@@ -25,6 +23,7 @@ pxr_library(pcp
         changes
         composeSite
         dependency
+        dependentNamespaceEditUtils
         dynamicFileFormatContext
         dynamicFileFormatDependencyData
         dynamicFileFormatInterface
@@ -378,6 +377,11 @@ pxr_install_test_dir(
 )
 
 pxr_install_test_dir(
+    SRC testenv/testPcpMuseum_BasicRelocateToAnimInterfaceAsNewRootPrim.testenv
+    DEST testPcpMuseum_BasicRelocateToAnimInterfaceAsNewRootPrim
+)
+
+pxr_install_test_dir(
     SRC testenv/testPcpMuseum_BasicInherits.testenv
     DEST testPcpMuseum_BasicInherits
 )
@@ -463,6 +467,11 @@ pxr_install_test_dir(
 )
 
 pxr_install_test_dir(
+    SRC testenv/testPcpMuseum_ElidedAncestralRelocates.testenv
+    DEST testPcpMuseum_ElidedAncestralRelocates
+)
+
+pxr_install_test_dir(
     SRC testenv/testPcpMuseum_ExpressionsInPayloads.testenv
     DEST testPcpMuseum_ExpressionsInPayloads
 )
@@ -530,6 +539,11 @@ pxr_install_test_dir(
 pxr_install_test_dir(
     SRC testenv/testPcpMuseum_RelocatePrimsWithSameName.testenv
     DEST testPcpMuseum_RelocatePrimsWithSameName
+)
+
+pxr_install_test_dir(
+    SRC testenv/testPcpMuseum_RelocateToNone.testenv
+    DEST testPcpMuseum_RelocateToNone
 )
 
 pxr_install_test_dir(
@@ -690,6 +704,11 @@ pxr_install_test_dir(
 pxr_install_test_dir(
     SRC testenv/testPcpMuseum_TrickyInheritsAndRelocates5.testenv
     DEST testPcpMuseum_TrickyInheritsAndRelocates5
+)
+
+pxr_install_test_dir(
+    SRC testenv/testPcpMuseum_TrickyInheritsAndRelocatesToNewRootPrim.testenv
+    DEST testPcpMuseum_TrickyInheritsAndRelocatesToNewRootPrim
 )
 
 pxr_install_test_dir(
@@ -973,8 +992,23 @@ pxr_install_test_dir(
 )
 
 pxr_install_test_dir(
+    SRC testenv/testPcpMuseum_ErrorInvalidReferenceToRelocationSource.testenv
+    DEST testPcpMuseum_ErrorInvalidReferenceToRelocationSource
+)
+
+pxr_install_test_dir(
     SRC testenv/testPcpMuseum_ErrorRelocateWithVariantSelection.testenv
     DEST testPcpMuseum_ErrorRelocateWithVariantSelection
+)
+
+pxr_install_test_dir(
+    SRC testenv/testPcpMuseum_VariantSpecializesAndReferenceSurprisingBehavior.testenv
+    DEST testPcpMuseum_VariantSpecializesAndReferenceSurprisingBehavior
+)
+
+pxr_install_test_dir(
+    SRC testenv/testPcpMuseum_VariantSpecializesAndReference.testenv
+    DEST testPcpMuseum_VariantSpecializesAndReference
 )
 
 pxr_register_test(testPcpMuseum_BasicInstancing
@@ -1053,6 +1087,13 @@ pxr_register_test(testPcpMuseum_BasicRelocateToAnimInterface
     COMMAND "${CMAKE_INSTALL_PREFIX}/tests/testPcpCompositionResults --usd BasicRelocateToAnimInterface/root.sdf" 
     STDOUT_REDIRECT compositionResults_BasicRelocateToAnimInterface.txt
     DIFF_COMPARE compositionResults_BasicRelocateToAnimInterface.txt 
+)
+
+pxr_register_test(testPcpMuseum_BasicRelocateToAnimInterfaceAsNewRootPrim
+    PYTHON
+    COMMAND "${CMAKE_INSTALL_PREFIX}/tests/testPcpCompositionResults --usd --errorFile compositionErrors_BasicRelocateToAnimInterfaceAsNewRootPrim_usd.txt BasicRelocateToAnimInterfaceAsNewRootPrim/root.sdf" 
+    STDOUT_REDIRECT compositionResults_BasicRelocateToAnimInterfaceAsNewRootPrim_usd.txt
+    DIFF_COMPARE compositionResults_BasicRelocateToAnimInterfaceAsNewRootPrim_usd.txt compositionErrors_BasicRelocateToAnimInterfaceAsNewRootPrim_usd.txt
 )
 
 pxr_register_test(testPcpMuseum_BasicInherits
@@ -1176,6 +1217,13 @@ pxr_register_test(testPcpMuseum_BasicSpecializesAndVariants
     DIFF_COMPARE compositionResults_BasicSpecializesAndVariants.txt 
 )
 
+pxr_register_test(testPcpMuseum_ElidedAncestralRelocates
+    PYTHON
+    COMMAND "${CMAKE_INSTALL_PREFIX}/tests/testPcpCompositionResults --usd ElidedAncestralRelocates/root.sdf" 
+    STDOUT_REDIRECT compositionResults_ElidedAncestralRelocates.txt
+    DIFF_COMPARE compositionResults_ElidedAncestralRelocates.txt
+)
+
 pxr_register_test(testPcpMuseum_ExpressionsInPayloads
     PYTHON
     COMMAND "${CMAKE_INSTALL_PREFIX}/tests/testPcpCompositionResults --usd ExpressionsInPayloads/root.sdf" 
@@ -1277,11 +1325,17 @@ pxr_register_test(testPcpMuseum_RelativePathReferences
 
 pxr_register_test(testPcpMuseum_RelocatePrimsWithSameName
     PYTHON
-    COMMAND "${CMAKE_INSTALL_PREFIX}/tests/testPcpCompositionResults --usd RelocatePrimsWithSameName/root.sdf" 
+    COMMAND "${CMAKE_INSTALL_PREFIX}/tests/testPcpCompositionResults --usd --errorFile compositionErrors_RelocatePrimsWithSameName.txt RelocatePrimsWithSameName/root.sdf" 
     STDOUT_REDIRECT compositionResults_RelocatePrimsWithSameName.txt
-    DIFF_COMPARE compositionResults_RelocatePrimsWithSameName.txt 
+    DIFF_COMPARE compositionResults_RelocatePrimsWithSameName.txt compositionErrors_RelocatePrimsWithSameName.txt
 )
 
+pxr_register_test(testPcpMuseum_RelocateToNone
+    PYTHON
+    COMMAND "${CMAKE_INSTALL_PREFIX}/tests/testPcpCompositionResults --usd --errorFile compositionErrors_RelocateToNone_usd.txt RelocateToNone/root.sdf" 
+    STDOUT_REDIRECT compositionResults_RelocateToNone_usd.txt
+    DIFF_COMPARE compositionResults_RelocateToNone_usd.txt compositionErrors_RelocateToNone_usd.txt
+)
 pxr_register_test(testPcpMuseum_SpecializesAndAncestralArcs
     PYTHON
     COMMAND "${CMAKE_INSTALL_PREFIX}/tests/testPcpCompositionResults --usd SpecializesAndAncestralArcs/root.sdf" 
@@ -1345,8 +1399,6 @@ pxr_register_test(testPcpMuseum_TimeCodesPerSecond1
     COMMAND "${CMAKE_INSTALL_PREFIX}/tests/testPcpCompositionResults --usd TimeCodesPerSecond/root.sdf" 
     STDOUT_REDIRECT compositionResults_TimeCodesPerSecond1.txt
     DIFF_COMPARE compositionResults_TimeCodesPerSecond1.txt 
-    ENV 
-        PCP_DISABLE_TIME_SCALING_BY_LAYER_TCPS=0
 )
 
 pxr_register_test(testPcpMuseum_TimeCodesPerSecond2
@@ -1354,8 +1406,6 @@ pxr_register_test(testPcpMuseum_TimeCodesPerSecond2
     COMMAND "${CMAKE_INSTALL_PREFIX}/tests/testPcpCompositionResults --usd TimeCodesPerSecond/root_48tcps.sdf" 
     STDOUT_REDIRECT compositionResults_TimeCodesPerSecond2.txt
     DIFF_COMPARE compositionResults_TimeCodesPerSecond2.txt 
-    ENV 
-        PCP_DISABLE_TIME_SCALING_BY_LAYER_TCPS=0
 )
 
 pxr_register_test(testPcpMuseum_TimeCodesPerSecond3
@@ -1363,8 +1413,6 @@ pxr_register_test(testPcpMuseum_TimeCodesPerSecond3
     COMMAND "${CMAKE_INSTALL_PREFIX}/tests/testPcpCompositionResults --usd TimeCodesPerSecond/root_24tcps_12fps.sdf" 
     STDOUT_REDIRECT compositionResults_TimeCodesPerSecond3.txt
     DIFF_COMPARE compositionResults_TimeCodesPerSecond3.txt 
-    ENV 
-        PCP_DISABLE_TIME_SCALING_BY_LAYER_TCPS=0
 )
 
 pxr_register_test(testPcpMuseum_TimeCodesPerSecond4
@@ -1372,44 +1420,6 @@ pxr_register_test(testPcpMuseum_TimeCodesPerSecond4
     COMMAND "${CMAKE_INSTALL_PREFIX}/tests/testPcpCompositionResults --usd TimeCodesPerSecond/root_12fps.sdf" 
     STDOUT_REDIRECT compositionResults_TimeCodesPerSecond4.txt
     DIFF_COMPARE compositionResults_TimeCodesPerSecond4.txt 
-    ENV 
-        PCP_DISABLE_TIME_SCALING_BY_LAYER_TCPS=0
-)
-
-pxr_register_test(testPcpMuseum_TimeCodesPerSecond_Legacy1
-    PYTHON
-    COMMAND "${CMAKE_INSTALL_PREFIX}/tests/testPcpCompositionResults --usd TimeCodesPerSecond/root.sdf" 
-    STDOUT_REDIRECT compositionResults_TimeCodesPerSecond1_Legacy.txt
-    DIFF_COMPARE compositionResults_TimeCodesPerSecond1_Legacy.txt 
-    ENV 
-        PCP_DISABLE_TIME_SCALING_BY_LAYER_TCPS=1
-)
-
-pxr_register_test(testPcpMuseum_TimeCodesPerSecond_Legacy2
-    PYTHON
-    COMMAND "${CMAKE_INSTALL_PREFIX}/tests/testPcpCompositionResults --usd TimeCodesPerSecond/root_48tcps.sdf" 
-    STDOUT_REDIRECT compositionResults_TimeCodesPerSecond2_Legacy.txt
-    DIFF_COMPARE compositionResults_TimeCodesPerSecond2_Legacy.txt 
-    ENV 
-        PCP_DISABLE_TIME_SCALING_BY_LAYER_TCPS=1
-)
-
-pxr_register_test(testPcpMuseum_TimeCodesPerSecond_Legacy3
-    PYTHON
-    COMMAND "${CMAKE_INSTALL_PREFIX}/tests/testPcpCompositionResults --usd TimeCodesPerSecond/root_24tcps_12fps.sdf" 
-    STDOUT_REDIRECT compositionResults_TimeCodesPerSecond3_Legacy.txt
-    DIFF_COMPARE compositionResults_TimeCodesPerSecond3_Legacy.txt 
-    ENV 
-        PCP_DISABLE_TIME_SCALING_BY_LAYER_TCPS=1
-)
-
-pxr_register_test(testPcpMuseum_TimeCodesPerSecond_Legacy4
-    PYTHON
-    COMMAND "${CMAKE_INSTALL_PREFIX}/tests/testPcpCompositionResults --usd TimeCodesPerSecond/root_12fps.sdf" 
-    STDOUT_REDIRECT compositionResults_TimeCodesPerSecond4_Legacy.txt
-    DIFF_COMPARE compositionResults_TimeCodesPerSecond4_Legacy.txt 
-    ENV 
-        PCP_DISABLE_TIME_SCALING_BY_LAYER_TCPS=1
 )
 
 pxr_register_test(testPcpMuseum_TimeCodesPerSecondWithSessionLayer1
@@ -1417,8 +1427,6 @@ pxr_register_test(testPcpMuseum_TimeCodesPerSecondWithSessionLayer1
     COMMAND "${CMAKE_INSTALL_PREFIX}/tests/testPcpCompositionResults --usd TimeCodesPerSecond/root_24tcps_12fps.sdf --session TimeCodesPerSecond/session_48tcps.sdf" 
     STDOUT_REDIRECT compositionResults_TimeCodesPerSecondWithSessionLayer1.txt
     DIFF_COMPARE compositionResults_TimeCodesPerSecondWithSessionLayer1.txt 
-    ENV 
-        PCP_DISABLE_TIME_SCALING_BY_LAYER_TCPS=0
 )
 
 pxr_register_test(testPcpMuseum_TimeCodesPerSecondWithSessionLayer2
@@ -1426,8 +1434,6 @@ pxr_register_test(testPcpMuseum_TimeCodesPerSecondWithSessionLayer2
     COMMAND "${CMAKE_INSTALL_PREFIX}/tests/testPcpCompositionResults --usd TimeCodesPerSecond/root_48tcps.sdf --session TimeCodesPerSecond/session_24fps.sdf" 
     STDOUT_REDIRECT compositionResults_TimeCodesPerSecondWithSessionLayer2.txt
     DIFF_COMPARE compositionResults_TimeCodesPerSecondWithSessionLayer2.txt 
-    ENV 
-        PCP_DISABLE_TIME_SCALING_BY_LAYER_TCPS=0
 )
 
 pxr_register_test(testPcpMuseum_TimeCodesPerSecondWithSessionLayer3
@@ -1435,8 +1441,6 @@ pxr_register_test(testPcpMuseum_TimeCodesPerSecondWithSessionLayer3
     COMMAND "${CMAKE_INSTALL_PREFIX}/tests/testPcpCompositionResults --usd TimeCodesPerSecond/root_12fps.sdf --session TimeCodesPerSecond/session_24fps.sdf" 
     STDOUT_REDIRECT compositionResults_TimeCodesPerSecondWithSessionLayer3.txt
     DIFF_COMPARE compositionResults_TimeCodesPerSecondWithSessionLayer3.txt 
-    ENV 
-        PCP_DISABLE_TIME_SCALING_BY_LAYER_TCPS=0
 )
 
 pxr_register_test(testPcpMuseum_TimeCodesPerSecondWithSessionLayer4
@@ -1444,8 +1448,6 @@ pxr_register_test(testPcpMuseum_TimeCodesPerSecondWithSessionLayer4
     COMMAND "${CMAKE_INSTALL_PREFIX}/tests/testPcpCompositionResults --usd TimeCodesPerSecond/root_12fps.sdf --session TimeCodesPerSecond/session.sdf" 
     STDOUT_REDIRECT compositionResults_TimeCodesPerSecondWithSessionLayer4.txt
     DIFF_COMPARE compositionResults_TimeCodesPerSecondWithSessionLayer4.txt 
-    ENV 
-        PCP_DISABLE_TIME_SCALING_BY_LAYER_TCPS=0
 )
 
 pxr_register_test(testPcpMuseum_TypicalReferenceToRiggedModel
@@ -1530,6 +1532,13 @@ pxr_register_test(testPcpMuseum_TrickyInheritsAndRelocates5
     COMMAND "${CMAKE_INSTALL_PREFIX}/tests/testPcpCompositionResults --usd TrickyInheritsAndRelocates5/root.sdf" 
     STDOUT_REDIRECT compositionResults_TrickyInheritsAndRelocates5.txt
     DIFF_COMPARE compositionResults_TrickyInheritsAndRelocates5.txt 
+)
+
+pxr_register_test(testPcpMuseum_TrickyInheritsAndRelocatesToNewRootPrim
+    PYTHON
+    COMMAND "${CMAKE_INSTALL_PREFIX}/tests/testPcpCompositionResults --usd  --errorFile compositionErrors_TrickyInheritsAndRelocatesToNewRootPrim.txt TrickyInheritsAndRelocatesToNewRootPrim/root.sdf" 
+    STDOUT_REDIRECT compositionResults_TrickyInheritsAndRelocatesToNewRootPrim.txt
+    DIFF_COMPARE compositionResults_TrickyInheritsAndRelocatesToNewRootPrim.txt compositionErrors_TrickyInheritsAndRelocatesToNewRootPrim.txt
 )
 
 pxr_register_test(testPcpMuseum_TrickyInheritsInVariants
@@ -1863,9 +1872,9 @@ pxr_register_test(testPcpMuseum_ErrorInconsistentProperties
 
 pxr_register_test(testPcpMuseum_ErrorInvalidInstanceTargetPath
     PYTHON
-    COMMAND "${CMAKE_INSTALL_PREFIX}/tests/testPcpCompositionResults --usd --errorFile compositionErrors_ErrorInvalidInstanceTargetPath.txt ErrorInvalidInstanceTargetPath/root.sdf" 
-    STDOUT_REDIRECT compositionResults_ErrorInvalidInstanceTargetPath.txt
-    DIFF_COMPARE compositionResults_ErrorInvalidInstanceTargetPath.txt compositionErrors_ErrorInvalidInstanceTargetPath.txt
+    COMMAND "${CMAKE_INSTALL_PREFIX}/tests/testPcpCompositionResults --usd --errorFile compositionErrors_ErrorInvalidInstanceTargetPath_usd.txt ErrorInvalidInstanceTargetPath/root.sdf" 
+    STDOUT_REDIRECT compositionResults_ErrorInvalidInstanceTargetPath_usd.txt
+    DIFF_COMPARE compositionResults_ErrorInvalidInstanceTargetPath_usd.txt compositionErrors_ErrorInvalidInstanceTargetPath_usd.txt
 )
 
 pxr_register_test(testPcpMuseum_ErrorInvalidPreRelocateTargetPath
@@ -1924,6 +1933,13 @@ if (NOT WIN32)
     )
 endif()
 
+pxr_register_test(testPcpMuseum_ErrorInvalidReferenceToRelocationSource
+    PYTHON
+    COMMAND "${CMAKE_INSTALL_PREFIX}/tests/testPcpCompositionResults --usd --errorFile compositionErrors_ErrorInvalidReferenceToRelocationSource.txt ErrorInvalidReferenceToRelocationSource/root.sdf" 
+    STDOUT_REDIRECT compositionResults_ErrorInvalidReferenceToRelocationSource.txt
+    DIFF_COMPARE compositionResults_ErrorInvalidReferenceToRelocationSource.txt compositionErrors_ErrorInvalidReferenceToRelocationSource.txt
+)
+
 pxr_register_test(testPcpMuseum_ErrorRelocateWithVariantSelection
     PYTHON
     COMMAND "${CMAKE_INSTALL_PREFIX}/tests/testPcpCompositionResults --usd --errorFile compositionErrors_ErrorRelocateWithVariantSelection.txt ErrorRelocateWithVariantSelection/root.sdf" 
@@ -1931,6 +1947,20 @@ pxr_register_test(testPcpMuseum_ErrorRelocateWithVariantSelection
     DIFF_COMPARE compositionResults_ErrorRelocateWithVariantSelection.txt compositionErrors_ErrorRelocateWithVariantSelection.txt
     ENV 
         SDF_SCHEMA_PROHIBIT_INVALID_VARIANT_SELECTIONS=0
+)
+
+pxr_register_test(testPcpMuseum_VariantSpecializesAndReferenceSurprisingBehavior
+    PYTHON
+    COMMAND "${CMAKE_INSTALL_PREFIX}/tests/testPcpCompositionResults --usd VariantSpecializesAndReferenceSurprisingBehavior/root.sdf" 
+    STDOUT_REDIRECT compositionResults_VariantSpecializesAndReferenceSurprisingBehavior.txt
+    DIFF_COMPARE compositionResults_VariantSpecializesAndReferenceSurprisingBehavior.txt
+)
+
+pxr_register_test(testPcpMuseum_VariantSpecializesAndReference
+    PYTHON
+    COMMAND "${CMAKE_INSTALL_PREFIX}/tests/testPcpCompositionResults --usd VariantSpecializesAndReference/root.sdf" 
+    STDOUT_REDIRECT compositionResults_VariantSpecializesAndReference.txt
+    DIFF_COMPARE compositionResults_VariantSpecializesAndReference.txt
 )
 
 pxr_register_test(testPcpIterator
@@ -1959,8 +1989,6 @@ pxr_register_test(testPcpChanges
     PYTHON
     COMMAND "${CMAKE_INSTALL_PREFIX}/tests/testPcpChanges"
     EXPECTED_RETURN_CODE 0
-    ENV
-        PCP_DISABLE_TIME_SCALING_BY_LAYER_TCPS=0
 )
 
 pxr_register_test(testPcpDependencies

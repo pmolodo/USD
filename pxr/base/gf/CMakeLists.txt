@@ -12,6 +12,8 @@ pxr_library(gf
     PUBLIC_CLASSES
         bbox3d
         camera
+        color
+        colorSpace
         dualQuatd
         dualQuatf
         dualQuath
@@ -75,12 +77,16 @@ pxr_library(gf
         numericCast.h
         traits.h
 
+    CPPFILES
+        nc/nanocolor.c
+
     PRIVATE_CLASSES
         ostreamHelpers
 
     PRIVATE_HEADERS
         ilmbase_eLut.h
         ilmbase_toFloat.h
+        nc/nanocolor.h
 
     PYTHON_CPPFILES
         moduleDeps.cpp
@@ -89,6 +95,8 @@ pxr_library(gf
         module.cpp
         wrapBBox3d.cpp
         wrapCamera.cpp
+        wrapColor.cpp
+        wrapColorSpace.cpp
         wrapDualQuatd.cpp
         wrapDualQuatf.cpp
         wrapDualQuath.cpp
@@ -170,11 +178,19 @@ pxr_build_test(testGfHardToReach
         gf
     CPPFILES
         testenv/testGfHardToReach.cpp
-) 
+)
+
+pxr_build_test(testGfColorCpp
+    LIBRARIES
+        gf
+    CPPFILES
+        testenv/testGfColorCpp.cpp
+)
 
 pxr_test_scripts(
     testenv/testGfBBox3d.py
     testenv/testGfCamera.py
+    testenv/testGfColorPy.py
     testenv/testGfDecomposeRotation.py
     testenv/testGfDualQuaternion.py
     testenv/testGfFrustum.py
@@ -200,6 +216,13 @@ pxr_test_scripts(
 pxr_register_test(testGfBBox3d
     PYTHON
     COMMAND "${CMAKE_INSTALL_PREFIX}/tests/testGfBBox3d"
+)
+pxr_register_test(testGfColorPy
+    PYTHON
+    COMMAND "${CMAKE_INSTALL_PREFIX}/tests/testGfColorPy"
+)
+pxr_register_test(testGfColorCpp
+    COMMAND "${CMAKE_INSTALL_PREFIX}/tests/testGfColorCpp"
 )
 pxr_register_test(testGfDecomposeRotation
     PYTHON

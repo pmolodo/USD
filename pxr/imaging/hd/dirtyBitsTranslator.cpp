@@ -1,25 +1,8 @@
 //
 // Copyright 2021 Pixar
 //
-// Licensed under the Apache License, Version 2.0 (the "Apache License")
-// with the following modification; you may not use this file except in
-// compliance with the Apache License and the following modification to it:
-// Section 6. Trademarks. is deleted and replaced with:
-//
-// 6. Trademarks. This License does not grant permission to use the trade
-//    names, trademarks, service marks, or product names of the Licensor
-//    and its affiliates, except as required to comply with Section 4(c) of
-//    the License and to reproduce the content of the NOTICE file.
-//
-// You may obtain a copy of the Apache License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the Apache License with the above modification is
-// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-// KIND, either express or implied. See the Apache License for the specific
-// language governing permissions and limitations under the Apache License.
+// Licensed under the terms set forth in the LICENSE.txt file available at
+// https://openusd.org/license.
 //
 #include "pxr/imaging/hd/dirtyBitsTranslator.h"
 
@@ -41,6 +24,7 @@
 #include "pxr/imaging/hd/cameraSchema.h"
 #include "pxr/imaging/hd/categoriesSchema.h"
 #include "pxr/imaging/hd/capsuleSchema.h"
+#include "pxr/imaging/hd/collectionsSchema.h"
 #include "pxr/imaging/hd/coneSchema.h"
 #include "pxr/imaging/hd/coordSysSchema.h"
 #include "pxr/imaging/hd/coordSysBindingSchema.h"
@@ -53,7 +37,6 @@
 #include "pxr/imaging/hd/extComputationSchema.h"
 #include "pxr/imaging/hd/extentSchema.h"
 #include "pxr/imaging/hd/geomSubsetSchema.h"
-#include "pxr/imaging/hd/geomSubsetsSchema.h"
 #include "pxr/imaging/hd/imageShaderSchema.h"
 #include "pxr/imaging/hd/instanceCategoriesSchema.h"
 #include "pxr/imaging/hd/instancedBySchema.h"
@@ -61,6 +44,7 @@
 #include "pxr/imaging/hd/instanceSchema.h"
 #include "pxr/imaging/hd/integratorSchema.h"
 #include "pxr/imaging/hd/legacyDisplayStyleSchema.h"
+#include "pxr/imaging/hd/legacyTaskSchema.h"
 #include "pxr/imaging/hd/lightSchema.h"
 #include "pxr/imaging/hd/materialBindingsSchema.h"
 #include "pxr/imaging/hd/materialConnectionSchema.h"
@@ -118,8 +102,7 @@ HdDirtyBitsTranslator::RprimDirtyBitsToLocatorSet(TfToken const& primType,
 
     if (primType == HdPrimTypeTokens->basisCurves) {
         if (bits & HdChangeTracker::DirtyTopology) {
-            // could either be topology or geomsubsets
-            set->append(HdBasisCurvesSchema::GetDefaultLocator());
+            set->append(HdBasisCurvesTopologySchema::GetDefaultLocator());
         }
     }
 
@@ -188,7 +171,6 @@ HdDirtyBitsTranslator::RprimDirtyBitsToLocatorSet(TfToken const& primType,
         }
 
         if (bits & HdChangeTracker::DirtyTopology) {
-            set->append(HdMeshSchema::GetGeomSubsetsLocator());
             set->append(HdMeshSchema::GetSubdivisionSchemeLocator());
         }
 
@@ -276,6 +258,8 @@ HdDirtyBitsTranslator::SprimDirtyBitsToLocatorSet(TfToken const& primType,
             set->append(HdXformSchema::GetDefaultLocator());
         }
     } else if (HdPrimTypeIsLight(primType)
+            // Lights and light filters are handled similarly in emulation.
+            || primType == HdPrimTypeTokens->lightFilter
             // special case for mesh lights coming from emulated scene
             // for which the type will be mesh even though we are receiving
             // sprim-specific dirty bits.
@@ -298,6 +282,10 @@ HdDirtyBitsTranslator::SprimDirtyBitsToLocatorSet(TfToken const& primType,
                 set->append(HdPrimvarsSchema::GetDefaultLocator());
             }
             set->append(HdVisibilitySchema::GetDefaultLocator());
+
+            // Invalidate collections manufactured for light linking in
+            // emulation.
+            set->append(HdCollectionsSchema::GetDefaultLocator());
         }
         if (bits & HdLight::DirtyTransform) {
             set->append(HdXformSchema::GetDefaultLocator());
@@ -408,6 +396,14 @@ HdDirtyBitsTranslator::InstancerDirtyBitsToLocatorSet(TfToken const& primType,
     if (bits & HdChangeTracker::DirtyTransform) {
         set->append(HdXformSchema::GetDefaultLocator());
     }
+    if (bits & HdChangeTracker::DirtyCategories) {
+        // Note: We don't have a DirtyInstanceCategories bit.
+        // For point instancers, instance categories is not relevant (i.e. all
+        // instances are affected), so we invalidate both categories and
+        // instanceCategories locators.
+        set->append(HdInstanceCategoriesSchema::GetDefaultLocator());
+        set->append(HdCategoriesSchema::GetDefaultLocator());
+    }
 }
 
 /*static*/
@@ -431,6 +427,9 @@ HdDirtyBitsTranslator::BprimDirtyBitsToLocatorSet(TfToken const& primType,
     } else if (primType == HdPrimTypeTokens->renderSettings) {
         if (bits & HdRenderSettings::DirtyActive) {
             set->append(HdRenderSettingsSchema::GetActiveLocator());
+        }
+        if (bits & HdRenderSettings::DirtyFrameNumber) {
+            set->append(HdRenderSettingsSchema::GetFrameLocator());
         }
         if (bits & HdRenderSettings::DirtyNamespacedSettings) {
             set->append(HdRenderSettingsSchema::GetNamespacedSettingsLocator());
@@ -532,15 +531,7 @@ HdDirtyBitsTranslator::RprimLocatorSetToDirtyBits(
     // "basisCurvesTopology", setting us up to check for displayStyle.
     if (primType == HdPrimTypeTokens->basisCurves) {
 
-        // Locator (*): basisCurves > geomSubsets
-
-        if (_FindLocator(HdBasisCurvesSchema::GetGeomSubsetsLocator(),
-                         end, &it)) {
-            bits |= HdChangeTracker::DirtyTopology;
-        }
-
-        // Locator (*): basisCurves > geomSubsets
-
+        // Locator (*): basisCurves > topology
         if (_FindLocator(HdBasisCurvesTopologySchema::GetDefaultLocator(),
                          end, &it)) {
             bits |= HdChangeTracker::DirtyTopology;
@@ -658,12 +649,6 @@ HdDirtyBitsTranslator::RprimLocatorSetToDirtyBits(
 
         if (_FindLocator(HdMeshSchema::GetDoubleSidedLocator(), end, &it)) {
             bits |= HdChangeTracker::DirtyDoubleSided;
-        }
-
-        // Locator (*): mesh > geomSubsets
-
-        if (_FindLocator(HdMeshSchema::GetGeomSubsetsLocator(), end, &it)) {
-            bits |= HdChangeTracker::DirtyTopology;
         }
 
         // Locator (*): mesh > subdivisionScheme
@@ -794,7 +779,10 @@ HdDirtyBitsTranslator::SprimLocatorSetToDirtyBits(
         if (_FindLocator(HdXformSchema::GetDefaultLocator(), end, &it)) {
             bits |= HdCamera::DirtyTransform;
         }
-    } else if (HdPrimTypeIsLight(primType)) {
+    } else if (HdPrimTypeIsLight(primType)
+        // Lights and light filters are handled similarly in emulation.
+        || primType == HdPrimTypeTokens->lightFilter) {
+
         if (_FindLocator(HdInstancedBySchema::GetDefaultLocator(), end, &it)) {
             bits |= HdLight::DirtyInstancer;
         }
@@ -952,6 +940,15 @@ HdDirtyBitsTranslator::InstancerLocatorSetToDirtyBits(
     HdDataSourceLocatorSet::const_iterator end = set.end();
     HdDirtyBits bits = HdChangeTracker::Clean;
 
+    if (_FindLocator(HdCategoriesSchema::GetDefaultLocator(), end, &it)) {
+        // This is relevant for point instancers.
+        bits |= HdChangeTracker::DirtyCategories;
+    }
+    if (_FindLocator(HdInstanceCategoriesSchema::GetDefaultLocator(), end, &it)) {
+        // We don't have an instance categories dirty bit.
+        // This is relevant for native instancers.
+        bits |= HdChangeTracker::DirtyCategories;
+    }
     if (_FindLocator(HdInstancedBySchema::GetDefaultLocator(), end, &it)) {
         bits |= HdChangeTracker::DirtyInstancer;
     }
@@ -963,6 +960,43 @@ HdDirtyBitsTranslator::InstancerLocatorSetToDirtyBits(
     }
     if (_FindLocator(HdXformSchema::GetDefaultLocator(), end, &it)) {
         bits |= HdChangeTracker::DirtyTransform;
+    }
+
+    return bits;
+}
+
+/*static*/
+HdDirtyBits
+HdDirtyBitsTranslator::TaskLocatorSetToDirtyBits(
+    HdDataSourceLocatorSet const& set)
+{
+    HdDataSourceLocatorSet::const_iterator it = set.begin();
+
+    const HdDataSourceLocatorSet::const_iterator end = set.end();
+
+    if (it == end) {
+        return HdChangeTracker::Clean;
+    }
+
+    // Note, for efficiency we search for locators in the set in order, so that
+    // we only end up making one trip through the set. If you add to this
+    // function, make sure you sort the addition by locator name, or
+    // _FindLocator won't work.
+
+    if (*it == HdDataSourceLocator::EmptyLocator()) {
+        return HdChangeTracker::AllDirty;
+    }
+
+    HdDirtyBits bits = HdChangeTracker::Clean;
+
+    if (_FindLocator(HdLegacyTaskSchema::GetCollectionLocator(), end, &it)) {
+        bits |= HdChangeTracker::DirtyCollection;
+    }
+    if (_FindLocator(HdLegacyTaskSchema::GetParametersLocator(), end, &it)) {
+        bits |= HdChangeTracker::DirtyParams;
+    }
+    if (_FindLocator(HdLegacyTaskSchema::GetRenderTagsLocator(), end, &it)) {
+        bits |= HdChangeTracker::DirtyRenderTags;
     }
 
     return bits;
@@ -997,8 +1031,12 @@ HdDirtyBitsTranslator::BprimLocatorSetToDirtyBits(
                 end, &it)) {
             bits |= HdRenderSettings::DirtyActive;
         }
+        if (_FindLocator(HdRenderSettingsSchema::GetFrameLocator(),
+                end, &it)) {
+            bits |= HdRenderSettings::DirtyFrameNumber;
+        }
         if (_FindLocator(HdRenderSettingsSchema::GetNamespacedSettingsLocator(),
-                 end, &it)) {
+                end, &it)) {
             bits |= HdRenderSettings::DirtyNamespacedSettings;
         }
         if (_FindLocator(HdRenderSettingsSchema::GetRenderProductsLocator(),

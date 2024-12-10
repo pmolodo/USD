@@ -1,25 +1,8 @@
 //
 // Copyright 2016 Pixar
 //
-// Licensed under the Apache License, Version 2.0 (the "Apache License")
-// with the following modification; you may not use this file except in
-// compliance with the Apache License and the following modification to it:
-// Section 6. Trademarks. is deleted and replaced with:
-//
-// 6. Trademarks. This License does not grant permission to use the trade
-//    names, trademarks, service marks, or product names of the Licensor
-//    and its affiliates, except as required to comply with Section 4(c) of
-//    the License and to reproduce the content of the NOTICE file.
-//
-// You may obtain a copy of the Apache License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the Apache License with the above modification is
-// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-// KIND, either express or implied. See the Apache License for the specific
-// language governing permissions and limitations under the Apache License.
+// Licensed under the terms set forth in the LICENSE.txt file available at
+// https://openusd.org/license.
 //
 #ifndef PXR_USD_SDF_LAYER_H
 #define PXR_USD_SDF_LAYER_H
@@ -58,6 +41,7 @@ PXR_NAMESPACE_OPEN_SCOPE
 TF_DECLARE_WEAK_PTRS(SdfFileFormat);
 TF_DECLARE_WEAK_AND_REF_PTRS(SdfLayerStateDelegateBase);
 
+class SdfChangeList;
 struct Sdf_AssetInfo;
 
 /// \class SdfLayer 
@@ -1573,6 +1557,7 @@ public:
     SDF_API
     bool QueryTimeSample(const SdfPath& path, double time, 
                          VtValue *value=NULL) const;
+
     SDF_API
     bool QueryTimeSample(const SdfPath& path, double time, 
                          SdfAbstractDataValue *value) const;
@@ -1599,6 +1584,7 @@ public:
     SDF_API
     void SetTimeSample(const SdfPath& path, double time, 
                        const VtValue & value);
+
     SDF_API
     void SetTimeSample(const SdfPath& path, double time, 
                        const SdfAbstractDataConstValue& value);
@@ -1628,6 +1614,18 @@ public:
     bool WriteDataFile(const std::string &filename);
 
     // @}
+
+    /// Returns a \ref SdfChangeList containing the minimal edits that would be
+    /// needed to transform this layer to match the contents of the given
+    /// \p layer parameter. If \p processPropertyFields is false, property 
+    /// fields will be ignored during the diff computation. Any differences in 
+    /// fields between properties with the same path in this layer and \p layer
+    /// will not be captured in the returned SdfChangeList.  This can, however,
+    /// avoid potentially expensive data retrieval operations.
+    SDF_API
+    SdfChangeList CreateDiff(
+        const SdfLayerHandle& layer,
+        bool processPropertyFields = true) const;
 
 protected:
     // Private constructor -- use New(), FindOrCreate(), etc.
@@ -1874,6 +1872,21 @@ private:
     // Set _data to \p newData and send coarse DidReplaceLayerContent
     // invalidation notice.
     void _AdoptData(const SdfAbstractDataRefPtr &newData);
+
+    // Helper function which will process incoming data to this layer in a
+    // generic way. 
+    // If \p processPropertyFields is false, this method will not
+    // consider property spec fields. In some cases, this can avoid expensive
+    // operations which would pull large amounts of data.
+    template<typename DeleteSpecFunc, typename CreateSpecFunc, 
+            typename SetFieldFunc, typename ErrorFunc>
+    void _ProcessIncomingData(const SdfAbstractDataPtr &newData,
+                              const SdfSchemaBase *newDataSchema,
+                              bool processPropertyFields,
+                              const DeleteSpecFunc &deleteSpecFunc,
+                              const CreateSpecFunc &createSpecFunc,
+                              const SetFieldFunc &setFieldFunc,
+                              const ErrorFunc &errorFunc) const;
 
     // Set _data to match data, calling other primitive setter methods to
     // provide fine-grained inverses and notification.  If \p data might adhere

@@ -146,11 +146,17 @@ class TestUsdGeomCamera(unittest.TestCase):
 
         usdCamera = UsdGeom.Camera.Define(stage, '/camera')
 
+        self.assertAlmostEqual(usdCamera.GetExposureAttr().Get(1.0), 1.0, places=3)
+        self.assertAlmostEqual(usdCamera.GetExposureTimeAttr().Get(1.0), 0.01, places=3)
+        self.assertAlmostEqual(usdCamera.GetExposureFStopAttr().Get(1.0), 4.0, places=3)
+        self.assertAlmostEqual(usdCamera.GetExposureIsoAttr().Get(1.0), 400.0, places=3)
+        self.assertAlmostEqual(usdCamera.GetExposureResponsivityAttr().Get(1.0), 3.0)
+
         self.assertAlmostEqual(usdCamera.ComputeLinearExposureScale(), 0.015, places=3)
 
         usdCamera.GetExposureAttr().Set(0.0)
         usdCamera.GetExposureTimeAttr().Set(1.0)
-        usdCamera.GetExposureFNumberAttr().Set(1.0)
+        usdCamera.GetExposureFStopAttr().Set(1.0)
         usdCamera.GetExposureIsoAttr().Set(100.0)
         usdCamera.GetExposureResponsivityAttr().Set(1.0)
 

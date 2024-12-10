@@ -9,7 +9,7 @@ def Camera "camera"
 
     float exposure = 1.0
     float exposure:time = 0.01
-    float exposure:fNumber = 4.0
+    float exposure:fStop = 4.0
     float exposure:iso = 400
     float exposure:responsivity = 3
 }

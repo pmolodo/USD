@@ -1052,7 +1052,7 @@
             ('exposureIso', T_FLOAT, dict(ADD_LOCATOR = True)),
             ('exposureFStop', T_FLOAT, dict(ADD_LOCATOR = True)),
             ('exposureResponsivity', T_FLOAT, dict(ADD_LOCATOR = True)),
-            ('exposureCompensation', T_FLOAT, dict(ADD_LOCATOR = True)),
+            ('exposureScale', T_FLOAT, dict(ADD_LOCATOR = True)),
             ('focusOn', T_BOOL, {}),
             ('dofAspect', T_FLOAT, {}),
             ('splitDiopter', 'HdSplitDiopterSchema', {}),

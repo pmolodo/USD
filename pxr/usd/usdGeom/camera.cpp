@@ -643,15 +643,15 @@ UsdGeomCamera::ComputeLinearExposureScale(UsdTimeCode time) const
     float exposureIso = 100.0f;
     float exposureFStop = 1.0f;
     float exposureResponsivity = 1.0f;
-    float exposureCompensation = 0.0f;
+    float exposureExponent = 0.0f;
 
     GetExposureTimeAttr().Get(&exposureTime, time);
     GetExposureIsoAttr().Get(&exposureIso, time);
     GetExposureFStopAttr().Get(&exposureFStop, time);
     GetExposureResponsivityAttr().Get(&exposureResponsivity, time);
-    GetExposureAttr().Get(&exposureCompensation, time);
+    GetExposureAttr().Get(&exposureExponent, time);
 
-    return (exposureTime * exposureIso * powf(2.0f, exposureCompensation) * 
+    return (exposureTime * exposureIso * powf(2.0f, exposureExponent) * 
             exposureResponsivity) / (100.0f * exposureFStop * exposureFStop);
 }
 

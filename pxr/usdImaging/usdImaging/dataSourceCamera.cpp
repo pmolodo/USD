@@ -123,8 +123,8 @@ public:
     , _usdCamera(usdCamera)
     , _stageGlobals(stageGlobals)
     {
-        static const HdDataSourceLocator exposureLocator = 
-            HdCameraSchema::GetExposureLocator();
+        static const HdDataSourceLocator exposureScaleLocator = 
+            HdCameraSchema::GetExposureScaleLocator();
 
         static const std::vector<TfToken> inputNames = {
             UsdGeomTokens->exposure,
@@ -141,7 +141,7 @@ public:
                 prim.GetAttribute(inputName),
                 _stageGlobals,
                 _sceneIndexPath,
-                exposureLocator));
+                exposureScaleLocator));
         }
     }
 
@@ -156,11 +156,7 @@ public:
         if (time.IsNumeric()) {
             time = UsdTimeCode(time.GetValue() + shutterOffset);
         }
-        // existing clients will be expecting it as logarithmic exposure,
-        // so we need to convert from a scalar multiplier to logarithmic
-        // exposure here. To get the original exposure attribute value,
-        // see "exposureCompensation" below.
-        return log2f(_usdCamera.ComputeLinearExposureScale(time));
+        return _usdCamera.ComputeLinearExposureScale(time);
     }
 
     bool GetContributingSampleTimesForInterval(
@@ -207,9 +203,7 @@ UsdImagingDataSourceCamera::GetNames()
 HdDataSourceBaseHandle
 UsdImagingDataSourceCamera::Get(const TfToken &name)
 {
-    if (name == HdCameraSchemaTokens->exposure) {
-        // we hijack the "exposure" token here in order to pass through the
-        // calculated exposure and make it backwards-compatible.
+    if (name == HdCameraSchemaTokens->exposureScale) {
         return _CameraExposureScaleDataSource::New(
             _sceneIndexPath, _usdCamera, _stageGlobals);
     }
@@ -225,10 +219,7 @@ UsdImagingDataSourceCamera::Get(const TfToken &name)
     else if (name == HdCameraSchemaTokens->shutterClose) {
         usdName = UsdGeomTokens->shutterClose;
     }
-    // Hydra "exposureCompensation" actually maps to USD "exposure".
-    else if (name == HdCameraSchemaTokens->exposureCompensation) {
-        usdName = UsdGeomTokens->exposure;
-    }
+    // Hydra "exposure" attribute maps unchanged to USD "exposure".
     // Other Hydra "exposure" attributes need to be mapped due to e.g.
     // "exposure:time" vs "exposureTime"
     else if (name == HdCameraSchemaTokens->exposureTime) {
@@ -336,38 +327,37 @@ UsdImagingDataSourceCameraPrim::Invalidate(
                     locators.insert(
                         HdCameraSchema::GetShutterCloseLocator());
                 } else if (usdName == UsdGeomTokens->exposure) {
-                    // The USD "exposure" attr is mapped to hydra as
-                    // "exposureCompensation", but is also an input to the
-                    // computed value stored at "exposure".
-                    locators.insert(
-                        HdCameraSchema::GetExposureCompensationLocator());
+                    // "exposure" maps unchanged to "exposure", and is an
+                    // input to the computed value stored at "exposureScale"
                     locators.insert(
                         HdCameraSchema::GetExposureLocator());
+                    locators.insert(
+                        HdCameraSchema::GetExposureScaleLocator());
                 } else if (usdName == UsdGeomTokens->exposureTime) {
                     // "exposure:time" maps to "exposureTime", and is an
-                    // input to "exposure"
+                    // input to the computed value stored at "exposureScale"
                     locators.insert(
                         HdCameraSchema::GetExposureTimeLocator());
                     locators.insert(
-                        HdCameraSchema::GetExposureLocator());
+                        HdCameraSchema::GetExposureScaleLocator());
                 } else if (usdName == UsdGeomTokens->exposureIso) {
                     // similar to exposureTime
                     locators.insert(
                         HdCameraSchema::GetExposureIsoLocator());
                     locators.insert(
-                        HdCameraSchema::GetExposureLocator());
+                        HdCameraSchema::GetExposureScaleLocator());
                 } else if (usdName == UsdGeomTokens->exposureFStop) {
                     // similar to exposureTime
                     locators.insert(
                         HdCameraSchema::GetExposureFStopLocator());
                     locators.insert(
-                        HdCameraSchema::GetExposureLocator());
+                        HdCameraSchema::GetExposureScaleLocator());
                 } else if (usdName == UsdGeomTokens->exposureResponsivity) {
                     // similar to exposureTime
                     locators.insert(
                         HdCameraSchema::GetExposureResponsivityLocator());
                     locators.insert(
-                        HdCameraSchema::GetExposureLocator());
+                        HdCameraSchema::GetExposureScaleLocator());
                 } else {
                     locators.insert(
                         HdCameraSchema::GetDefaultLocator().Append(

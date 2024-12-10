@@ -242,13 +242,11 @@ UsdImagingCameraAdapter::Get(UsdPrim const& prim,
         cam.GetShutterCloseAttr().Get(&vShutterClose, time); // conversion n/a
         return vShutterClose;
     } else if (key == HdCameraTokens->exposure) {
-        // we hijack the "exposure" token here in order to pass through the
-        // calculated exposure and make it backwards-compatible.
-        // existing clients will be expecting it as logarithmic exposure,
-        // so we need to convert from a scalar multiplier to logarithmic
-        // exposure here. To get the original exposure attribute value,
-        // see "exposureCompensation" below.
-        return VtValue(log2(cam.ComputeLinearExposureScale(time)));
+        // The raw exponential compensation attribute.
+        // See "exposureScale" below for the computed linear multiplier ratio.
+        VtValue vExposureExponent;
+        cam.GetExposureAttr().Get(&vExposureExponent, time); // conversion n/a
+        return vExposureExponent;
     } else if (key == HdCameraTokens->exposureTime) {
         VtValue vExposureTime;
         cam.GetExposureTimeAttr().Get(&vExposureTime, time); // conversion n/a
@@ -265,10 +263,9 @@ UsdImagingCameraAdapter::Get(UsdPrim const& prim,
         VtValue vExposureResponsivity;
         cam.GetExposureResponsivityAttr().Get(&vExposureResponsivity, time); // conversion n/a
         return vExposureResponsivity;
-    } else if (key == HdCameraTokens->exposureCompensation) {
-        VtValue vExposureCompensation;
-        cam.GetExposureAttr().Get(&vExposureCompensation, time); // conversion n/a
-        return vExposureCompensation;
+    } else if (key == HdCameraTokens->exposureScale) {
+        // The computed linear exposure multiplier ratio
+        return VtValue(log2(cam.ComputeLinearExposureScale(time)));
     }
 
     VtValue v;

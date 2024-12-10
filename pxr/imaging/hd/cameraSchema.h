@@ -54,7 +54,7 @@ PXR_NAMESPACE_OPEN_SCOPE
     (exposureIso) \
     (exposureFStop) \
     (exposureResponsivity) \
-    (exposureCompensation) \
+    (exposureScale) \
     (focusOn) \
     (dofAspect) \
     (splitDiopter) \
@@ -147,7 +147,7 @@ public:
     HdFloatDataSourceHandle GetExposureResponsivity() const;
 
     HD_API
-    HdFloatDataSourceHandle GetExposureCompensation() const;
+    HdFloatDataSourceHandle GetExposureScale() const;
 
     HD_API
     HdBoolDataSourceHandle GetFocusOn() const;
@@ -218,9 +218,9 @@ public:
     HD_API
     static const HdDataSourceLocator &GetExposureResponsivityLocator();
 
-    /// Prim-level relative data source locator to locate exposureCompensation.
+    /// Prim-level relative data source locator to locate exposureScale.
     HD_API
-    static const HdDataSourceLocator &GetExposureCompensationLocator();
+    static const HdDataSourceLocator &GetExposureScaleLocator();
 
     /// Prim-level relative data source locator to locate namespacedProperties.
     HD_API
@@ -257,7 +257,7 @@ public:
         const HdFloatDataSourceHandle &exposureIso,
         const HdFloatDataSourceHandle &exposureFStop,
         const HdFloatDataSourceHandle &exposureResponsivity,
-        const HdFloatDataSourceHandle &exposureCompensation,
+        const HdFloatDataSourceHandle &exposureScale,
         const HdBoolDataSourceHandle &focusOn,
         const HdFloatDataSourceHandle &dofAspect,
         const HdContainerDataSourceHandle &splitDiopter,
@@ -326,8 +326,8 @@ public:
         Builder &SetExposureResponsivity(
             const HdFloatDataSourceHandle &exposureResponsivity);
         HD_API
-        Builder &SetExposureCompensation(
-            const HdFloatDataSourceHandle &exposureCompensation);
+        Builder &SetExposureScale(
+            const HdFloatDataSourceHandle &exposureScale);
         HD_API
         Builder &SetFocusOn(
             const HdBoolDataSourceHandle &focusOn);
@@ -366,7 +366,7 @@ public:
         HdFloatDataSourceHandle _exposureIso;
         HdFloatDataSourceHandle _exposureFStop;
         HdFloatDataSourceHandle _exposureResponsivity;
-        HdFloatDataSourceHandle _exposureCompensation;
+        HdFloatDataSourceHandle _exposureScale;
         HdBoolDataSourceHandle _focusOn;
         HdFloatDataSourceHandle _dofAspect;
         HdContainerDataSourceHandle _splitDiopter;

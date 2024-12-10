@@ -1047,7 +1047,7 @@ public:
             HdCameraSchemaTokens->exposureIso,
             HdCameraSchemaTokens->exposureFStop,
             HdCameraSchemaTokens->exposureResponsivity,
-            HdCameraSchemaTokens->exposureCompensation,
+            HdCameraSchemaTokens->exposureScale,
             HdCameraSchemaTokens->focusOn,
             HdCameraSchemaTokens->dofAspect,
             HdCameraSchemaTokens->splitDiopter,

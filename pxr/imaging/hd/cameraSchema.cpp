@@ -152,10 +152,10 @@ HdCameraSchema::GetExposureResponsivity() const
 }
 
 HdFloatDataSourceHandle
-HdCameraSchema::GetExposureCompensation() const
+HdCameraSchema::GetExposureScale() const
 {
     return _GetTypedDataSource<HdFloatDataSource>(
-        HdCameraSchemaTokens->exposureCompensation);
+        HdCameraSchemaTokens->exposureScale);
 }
 
 HdBoolDataSourceHandle
@@ -213,7 +213,7 @@ HdCameraSchema::BuildRetained(
         const HdFloatDataSourceHandle &exposureIso,
         const HdFloatDataSourceHandle &exposureFStop,
         const HdFloatDataSourceHandle &exposureResponsivity,
-        const HdFloatDataSourceHandle &exposureCompensation,
+        const HdFloatDataSourceHandle &exposureScale,
         const HdBoolDataSourceHandle &focusOn,
         const HdFloatDataSourceHandle &dofAspect,
         const HdContainerDataSourceHandle &splitDiopter,
@@ -311,9 +311,9 @@ HdCameraSchema::BuildRetained(
         _values[_count++] = exposureResponsivity;
     }
 
-    if (exposureCompensation) {
-        _names[_count] = HdCameraSchemaTokens->exposureCompensation;
-        _values[_count++] = exposureCompensation;
+    if (exposureScale) {
+        _names[_count] = HdCameraSchemaTokens->exposureScale;
+        _values[_count++] = exposureScale;
     }
 
     if (focusOn) {
@@ -480,10 +480,10 @@ HdCameraSchema::Builder::SetExposureResponsivity(
 }
 
 HdCameraSchema::Builder &
-HdCameraSchema::Builder::SetExposureCompensation(
-    const HdFloatDataSourceHandle &exposureCompensation)
+HdCameraSchema::Builder::SetExposureScale(
+    const HdFloatDataSourceHandle &exposureScale)
 {
-    _exposureCompensation = exposureCompensation;
+    _exposureScale = exposureScale;
     return *this;
 }
 
@@ -548,7 +548,7 @@ HdCameraSchema::Builder::Build()
         _exposureIso,
         _exposureFStop,
         _exposureResponsivity,
-        _exposureCompensation,
+        _exposureScale,
         _focusOn,
         _dofAspect,
         _splitDiopter,
@@ -656,11 +656,11 @@ HdCameraSchema::GetExposureResponsivityLocator()
 
 /* static */
 const HdDataSourceLocator &
-HdCameraSchema::GetExposureCompensationLocator()
+HdCameraSchema::GetExposureScaleLocator()
 {
     static const HdDataSourceLocator locator =
         GetDefaultLocator().Append(
-            HdCameraSchemaTokens->exposureCompensation);
+            HdCameraSchemaTokens->exposureScale);
     return locator;
 }
 

@@ -14,6 +14,7 @@
 #include "pxr/imaging/hdx/boundingBoxTask.h"
 #include "pxr/imaging/hdx/colorizeSelectionTask.h"
 #include "pxr/imaging/hdx/colorCorrectionTask.h"
+#include "pxr/imaging/hdx/exposureScaleTask.h"
 #include "pxr/imaging/hdx/freeCameraSceneDelegate.h"
 #include "pxr/imaging/hdx/oitRenderTask.h"
 #include "pxr/imaging/hdx/oitResolveTask.h"
@@ -47,6 +48,7 @@ TF_DEFINE_PRIVATE_TOKENS(
     (shadowTask)
     (aovInputTask)
     (selectionTask)
+    (exposureScaleTask)
     (colorizeSelectionTask)
     (oitResolveTask)
     (colorCorrectionTask)
@@ -200,6 +202,7 @@ HdxTaskController::~HdxTaskController()
         _selectionTaskId,
         _simpleLightTaskId,
         _shadowTaskId,
+        _exposureScaleTaskId,
         _colorizeSelectionTaskId,
         _colorCorrectionTaskId,
         _pickTaskId,
@@ -257,10 +260,12 @@ HdxTaskController::_CreateRenderGraph()
         _renderTaskIds.push_back(_CreateRenderTask(
             HdStMaterialTagTokens->volume));
 
+
         if (_AovsSupported()) {
             _CreateAovInputTask();
             _CreateOitResolveTask();
             _CreateSelectionTask();
+            _CreateExposureScaleTask();
             _CreateColorCorrectionTask();
             _CreateVisualizeAovTask();
             _CreatePresentTask();
@@ -281,6 +286,7 @@ HdxTaskController::_CreateRenderGraph()
         if (_AovsSupported()) {
             if (_gpuEnabled) {
                 _CreateAovInputTask();
+                _CreateExposureScaleTask();
                 _CreateColorizeSelectionTask();
                 _CreateColorCorrectionTask();
                 _CreateVisualizeAovTask();
@@ -441,6 +447,23 @@ HdxTaskController::_CreateSelectionTask()
     _delegate.SetParameter(_selectionTaskId, HdTokens->params,
         selectionParams);
 }
+
+void
+HdxTaskController::_CreateExposureScaleTask()
+{
+    // Create a post-process exposure scaling task.
+    _exposureScaleTaskId = GetControllerId().AppendChild(
+        _tokens->exposureScaleTask);
+
+    HdxExposureScaleTaskParams exposureScaleParams;
+
+    GetRenderIndex()->InsertTask<HdxExposureScaleTask>(&_delegate,
+        _exposureScaleTaskId);
+
+    _delegate.SetParameter(_exposureScaleTaskId, HdTokens->params,
+        exposureScaleParams);
+}
+
 
 void
 HdxTaskController::_CreateColorizeSelectionTask()
@@ -646,6 +669,12 @@ HdxTaskController::_SelectionEnabled() const
 }
 
 bool
+HdxTaskController::_ExposureScaleEnabled() const
+{
+    return _viewportAov == HdAovTokens->color;
+}
+
+bool
 HdxTaskController::_ColorizeSelectionEnabled() const
 {
     return _viewportAov == HdAovTokens->color;
@@ -699,6 +728,7 @@ HdxTaskController::GetRenderingTasks() const
      * - aovInputTaskId
      * - boundingBoxTaskId
      * - selectionTaskId
+     * - exposureScaleTaskId
      * - colorizeSelectionTaskId
      * - colorCorrectionTaskId
      * - visualizeAovTaskId
@@ -756,6 +786,10 @@ HdxTaskController::GetRenderingTasks() const
 
     if (!_selectionTaskId.IsEmpty() && _SelectionEnabled()) {
         tasks.push_back(GetRenderIndex()->GetTask(_selectionTaskId));
+    }
+
+    if (!_exposureScaleTaskId.IsEmpty() && _ExposureScaleEnabled()) {
+        tasks.push_back(GetRenderIndex()->GetTask(_exposureScaleTaskId));
     }
 
     if (!_colorizeSelectionTaskId.IsEmpty() && _ColorizeSelectionEnabled()) {
@@ -2031,6 +2065,18 @@ HdxTaskController::_SetCameraParamForTasks(SdfPath const& id)
             GetRenderIndex()->GetChangeTracker().MarkTaskDirty(
                 _pickFromRenderBufferTaskId, HdChangeTracker::DirtyParams);
         }
+
+        if (!_exposureScaleTaskId.IsEmpty()) {
+            HdxExposureScaleTaskParams params =
+                _delegate.GetParameter<HdxExposureScaleTaskParams>(
+                    _exposureScaleTaskId, HdTokens->params);
+            params.cameraPath = _activeCameraId;
+            _delegate.SetParameter(_exposureScaleTaskId, HdTokens->params,
+                                   params);
+            GetRenderIndex()->GetChangeTracker().MarkTaskDirty(
+                _exposureScaleTaskId, HdChangeTracker::DirtyParams);
+        }
+
     }
 }
 

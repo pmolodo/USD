@@ -265,7 +265,7 @@ UsdImagingCameraAdapter::Get(UsdPrim const& prim,
         return vExposureResponsivity;
     } else if (key == HdCameraTokens->exposureScale) {
         // The computed linear exposure multiplier ratio
-        return VtValue(log2(cam.ComputeLinearExposureScale(time)));
+        return VtValue(cam.ComputeLinearExposureScale(time));
     }
 
     VtValue v;

@@ -162,11 +162,7 @@ HdxTaskController::_Delegate::GetTaskRenderTags(SdfPath const& taskId)
 static bool
 _IsStormRenderingBackend(HdRenderIndex const *index)
 {
-    if(!dynamic_cast<HdStRenderDelegate*>(index->GetRenderDelegate())) {
-        return false;
-    }
-
-    return true;
+    return bool(dynamic_cast<HdStRenderDelegate*>(index->GetRenderDelegate()));
 }
 
 static GfVec2i
@@ -652,10 +648,7 @@ HdxTaskController::_SelectionEnabled() const
 bool
 HdxTaskController::_ColorizeSelectionEnabled() const
 {
-    if (_viewportAov == HdAovTokens->color) {
-        return true;
-    }
-    return false;
+    return _viewportAov == HdAovTokens->color;
 }
 
 bool
@@ -678,10 +671,7 @@ bool
 HdxTaskController::_VisualizeAovEnabled() const
 {
     // Only non-color AOVs need special colorization for viz.
-    if (_viewportAov != HdAovTokens->color) {
-        return true;
-    }
-    return false;
+    return _viewportAov != HdAovTokens->color;
 }
 
 bool

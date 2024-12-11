@@ -136,7 +136,7 @@ public:
 
         _inputs.resize(inputNames.size());
         UsdPrim prim = _usdCamera.GetPrim();
-        for (TfToken inputName : inputNames) {
+        for (const TfToken& inputName : inputNames) {
             _inputs.push_back(UsdImagingDataSourceAttributeNew(
                 prim.GetAttribute(inputName),
                 _stageGlobals,

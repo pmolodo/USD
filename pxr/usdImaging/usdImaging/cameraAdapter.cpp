@@ -243,7 +243,7 @@ UsdImagingCameraAdapter::Get(UsdPrim const& prim,
         return vShutterClose;
     } else if (key == HdCameraTokens->exposure) {
         // The raw exponential compensation attribute.
-        // See "exposureScale" below for the computed linear multiplier ratio.
+        // See "linearExposureScale" below for the computed linear multiplier.
         VtValue vExposureExponent;
         cam.GetExposureAttr().Get(&vExposureExponent, time); // conversion n/a
         return vExposureExponent;
@@ -264,7 +264,7 @@ UsdImagingCameraAdapter::Get(UsdPrim const& prim,
         cam.GetExposureResponsivityAttr().Get(&vExposureResponsivity, time); // conversion n/a
         return vExposureResponsivity;
     } else if (key == HdCameraTokens->linearExposureScale) {
-        // The computed linear exposure multiplier ratio
+        // The computed linear exposure multiplier.
         return VtValue(cam.ComputeLinearExposureScale(time));
     }
 

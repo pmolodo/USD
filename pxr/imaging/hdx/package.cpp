@@ -91,9 +91,9 @@ HdxPackageRenderPassShadowShader()
 }
 
 TfToken
-HdxPackageExposureScaleShader()
+HdxPackageLinearExposureScaleShader()
 {
-    static TfToken shader = _GetShaderPath("exposureScale.glslfx");
+    static TfToken shader = _GetShaderPath("linearExposureScale.glslfx");
     return shader;
 }
 

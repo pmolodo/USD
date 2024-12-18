@@ -44,7 +44,7 @@ pxr_library(hdx
         colorCorrectionTask
         drawTargetTask
         effectsShader
-        exposureScaleTask
+        linearExposureScaleTask
         freeCameraSceneDelegate
         fullscreenShader
         hgiConversions
@@ -87,7 +87,7 @@ pxr_library(hdx
         shaders/boundingBox.glslfx
         shaders/colorChannel.glslfx
         shaders/colorCorrection.glslfx
-        shaders/exposureScale.glslfx
+        shaders/linearExposureScale.glslfx
         shaders/fullscreen.glslfx
         shaders/oitResolveImageShader.glslfx
         shaders/outline.glslfx

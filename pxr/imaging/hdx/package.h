@@ -21,7 +21,7 @@ TfToken HdxPackageRenderPassColorWithOccludedSelectionShader();
 TfToken HdxPackageRenderPassIdShader();
 TfToken HdxPackageRenderPassPickingShader();
 TfToken HdxPackageRenderPassShadowShader();
-TfToken HdxPackageExposureScaleShader();
+TfToken HdxPackageLinearExposureScaleShader();
 TfToken HdxPackageColorChannelShader();
 TfToken HdxPackageColorCorrectionShader();
 TfToken HdxPackageVisualizeAovShader();

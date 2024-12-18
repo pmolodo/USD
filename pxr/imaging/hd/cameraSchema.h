@@ -147,7 +147,7 @@ public:
     HdFloatDataSourceHandle GetExposureResponsivity() const;
 
     HD_API
-    HdFloatDataSourceHandle GetExposureScale() const;
+    HdFloatDataSourceHandle GetLinearExposureScale() const;
 
     HD_API
     HdBoolDataSourceHandle GetFocusOn() const;
@@ -218,9 +218,9 @@ public:
     HD_API
     static const HdDataSourceLocator &GetExposureResponsivityLocator();
 
-    /// Prim-level relative data source locator to locate exposureScale.
+    /// Prim-level relative data source locator to locate linearExposureScale.
     HD_API
-    static const HdDataSourceLocator &GetExposureScaleLocator();
+    static const HdDataSourceLocator &GetLinearExposureScaleLocator();
 
     /// Prim-level relative data source locator to locate namespacedProperties.
     HD_API
@@ -257,7 +257,7 @@ public:
         const HdFloatDataSourceHandle &exposureIso,
         const HdFloatDataSourceHandle &exposureFStop,
         const HdFloatDataSourceHandle &exposureResponsivity,
-        const HdFloatDataSourceHandle &exposureScale,
+        const HdFloatDataSourceHandle &linearExposureScale,
         const HdBoolDataSourceHandle &focusOn,
         const HdFloatDataSourceHandle &dofAspect,
         const HdContainerDataSourceHandle &splitDiopter,
@@ -326,8 +326,8 @@ public:
         Builder &SetExposureResponsivity(
             const HdFloatDataSourceHandle &exposureResponsivity);
         HD_API
-        Builder &SetExposureScale(
-            const HdFloatDataSourceHandle &exposureScale);
+        Builder &SetLinearExposureScale(
+            const HdFloatDataSourceHandle &linearExposureScale);
         HD_API
         Builder &SetFocusOn(
             const HdBoolDataSourceHandle &focusOn);
@@ -366,7 +366,7 @@ public:
         HdFloatDataSourceHandle _exposureIso;
         HdFloatDataSourceHandle _exposureFStop;
         HdFloatDataSourceHandle _exposureResponsivity;
-        HdFloatDataSourceHandle _exposureScale;
+        HdFloatDataSourceHandle _linearExposureScale;
         HdBoolDataSourceHandle _focusOn;
         HdFloatDataSourceHandle _dofAspect;
         HdContainerDataSourceHandle _splitDiopter;

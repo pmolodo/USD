@@ -14,7 +14,7 @@
 #include "pxr/imaging/hdx/boundingBoxTask.h"
 #include "pxr/imaging/hdx/colorizeSelectionTask.h"
 #include "pxr/imaging/hdx/colorCorrectionTask.h"
-#include "pxr/imaging/hdx/exposureScaleTask.h"
+#include "pxr/imaging/hdx/linearExposureScaleTask.h"
 #include "pxr/imaging/hdx/freeCameraSceneDelegate.h"
 #include "pxr/imaging/hdx/oitRenderTask.h"
 #include "pxr/imaging/hdx/oitResolveTask.h"
@@ -48,7 +48,7 @@ TF_DEFINE_PRIVATE_TOKENS(
     (shadowTask)
     (aovInputTask)
     (selectionTask)
-    (exposureScaleTask)
+    (linearExposureScaleTask)
     (colorizeSelectionTask)
     (oitResolveTask)
     (colorCorrectionTask)
@@ -202,7 +202,7 @@ HdxTaskController::~HdxTaskController()
         _selectionTaskId,
         _simpleLightTaskId,
         _shadowTaskId,
-        _exposureScaleTaskId,
+        _linearExposureScaleTaskId,
         _colorizeSelectionTaskId,
         _colorCorrectionTaskId,
         _pickTaskId,
@@ -265,7 +265,7 @@ HdxTaskController::_CreateRenderGraph()
             _CreateAovInputTask();
             _CreateOitResolveTask();
             _CreateSelectionTask();
-            _CreateExposureScaleTask();
+            _CreateLinearExposureScaleTask();
             _CreateColorCorrectionTask();
             _CreateVisualizeAovTask();
             _CreatePresentTask();
@@ -286,7 +286,7 @@ HdxTaskController::_CreateRenderGraph()
         if (_AovsSupported()) {
             if (_gpuEnabled) {
                 _CreateAovInputTask();
-                _CreateExposureScaleTask();
+                _CreateLinearExposureScaleTask();
                 _CreateColorizeSelectionTask();
                 _CreateColorCorrectionTask();
                 _CreateVisualizeAovTask();
@@ -449,19 +449,19 @@ HdxTaskController::_CreateSelectionTask()
 }
 
 void
-HdxTaskController::_CreateExposureScaleTask()
+HdxTaskController::_CreateLinearExposureScaleTask()
 {
     // Create a post-process exposure scaling task.
-    _exposureScaleTaskId = GetControllerId().AppendChild(
-        _tokens->exposureScaleTask);
+    _linearExposureScaleTaskId = GetControllerId().AppendChild(
+        _tokens->linearExposureScaleTask);
 
-    HdxExposureScaleTaskParams exposureScaleParams;
+    HdxLinearExposureScaleTaskParams linearExposureScaleParams;
 
-    GetRenderIndex()->InsertTask<HdxExposureScaleTask>(&_delegate,
-        _exposureScaleTaskId);
+    GetRenderIndex()->InsertTask<HdxLinearExposureScaleTask>(&_delegate,
+        _linearExposureScaleTaskId);
 
-    _delegate.SetParameter(_exposureScaleTaskId, HdTokens->params,
-        exposureScaleParams);
+    _delegate.SetParameter(_linearExposureScaleTaskId, HdTokens->params,
+        linearExposureScaleParams);
 }
 
 
@@ -669,7 +669,7 @@ HdxTaskController::_SelectionEnabled() const
 }
 
 bool
-HdxTaskController::_ExposureScaleEnabled() const
+HdxTaskController::_LinearExposureScaleEnabled() const
 {
     return _viewportAov == HdAovTokens->color;
 }
@@ -728,7 +728,7 @@ HdxTaskController::GetRenderingTasks() const
      * - aovInputTaskId
      * - boundingBoxTaskId
      * - selectionTaskId
-     * - exposureScaleTaskId
+     * - linearExposureScaleTaskId
      * - colorizeSelectionTaskId
      * - colorCorrectionTaskId
      * - visualizeAovTaskId
@@ -788,8 +788,8 @@ HdxTaskController::GetRenderingTasks() const
         tasks.push_back(GetRenderIndex()->GetTask(_selectionTaskId));
     }
 
-    if (!_exposureScaleTaskId.IsEmpty() && _ExposureScaleEnabled()) {
-        tasks.push_back(GetRenderIndex()->GetTask(_exposureScaleTaskId));
+    if (!_linearExposureScaleTaskId.IsEmpty() && _LinearExposureScaleEnabled()) {
+        tasks.push_back(GetRenderIndex()->GetTask(_linearExposureScaleTaskId));
     }
 
     if (!_colorizeSelectionTaskId.IsEmpty() && _ColorizeSelectionEnabled()) {
@@ -2066,15 +2066,15 @@ HdxTaskController::_SetCameraParamForTasks(SdfPath const& id)
                 _pickFromRenderBufferTaskId, HdChangeTracker::DirtyParams);
         }
 
-        if (!_exposureScaleTaskId.IsEmpty()) {
-            HdxExposureScaleTaskParams params =
-                _delegate.GetParameter<HdxExposureScaleTaskParams>(
-                    _exposureScaleTaskId, HdTokens->params);
+        if (!_linearExposureScaleTaskId.IsEmpty()) {
+            HdxLinearExposureScaleTaskParams params =
+                _delegate.GetParameter<HdxLinearExposureScaleTaskParams>(
+                    _linearExposureScaleTaskId, HdTokens->params);
             params.cameraPath = _activeCameraId;
-            _delegate.SetParameter(_exposureScaleTaskId, HdTokens->params,
+            _delegate.SetParameter(_linearExposureScaleTaskId, HdTokens->params,
                                    params);
             GetRenderIndex()->GetChangeTracker().MarkTaskDirty(
-                _exposureScaleTaskId, HdChangeTracker::DirtyParams);
+                _linearExposureScaleTaskId, HdChangeTracker::DirtyParams);
         }
 
     }

@@ -360,7 +360,8 @@ WRAP_CUSTOM {
         .def("SetFromCamera", &UsdGeomCamera::SetFromCamera,
              (arg("camera"),
               arg("time") = UsdTimeCode::Default()))
-        .def("ComputeLinearExposureScale", &UsdGeomCamera::ComputeLinearExposureScale,
+        .def("ComputeLinearExposureScale",
+             &UsdGeomCamera::ComputeLinearExposureScale,
              (arg("time") = UsdTimeCode::Default()))
     ;
 }

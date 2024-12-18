@@ -109,13 +109,13 @@ private:
     typename HdTypedSampledDataSource<VtArray<GfVec4f>>::Handle _dataSource;
 };
 
-class _CameraExposureScaleDataSource
+class _CameraLinearExposureScaleDataSource
     : public HdTypedSampledDataSource<float>
 {
 public:
-    HD_DECLARE_DATASOURCE(_CameraExposureScaleDataSource);
+    HD_DECLARE_DATASOURCE(_CameraLinearExposureScaleDataSource);
 
-    _CameraExposureScaleDataSource(
+    _CameraLinearExposureScaleDataSource(
         const SdfPath &sceneIndexPath,
         UsdGeomCamera usdCamera,
         const UsdImagingDataSourceStageGlobals &stageGlobals)
@@ -123,8 +123,8 @@ public:
     , _usdCamera(usdCamera)
     , _stageGlobals(stageGlobals)
     {
-        static const HdDataSourceLocator exposureScaleLocator = 
-            HdCameraSchema::GetExposureScaleLocator();
+        static const HdDataSourceLocator linearExposureScaleLocator = 
+            HdCameraSchema::GetLinearExposureScaleLocator();
 
         static const std::vector<TfToken> inputNames = {
             UsdGeomTokens->exposure,
@@ -141,7 +141,7 @@ public:
                 prim.GetAttribute(inputName),
                 _stageGlobals,
                 _sceneIndexPath,
-                exposureScaleLocator));
+                linearExposureScaleLocator));
         }
     }
 
@@ -204,7 +204,7 @@ HdDataSourceBaseHandle
 UsdImagingDataSourceCamera::Get(const TfToken &name)
 {
     if (name == HdCameraSchemaTokens->linearExposureScale) {
-        return _CameraExposureScaleDataSource::New(
+        return _CameraLinearExposureScaleDataSource::New(
             _sceneIndexPath, _usdCamera, _stageGlobals);
     }
 
@@ -327,37 +327,37 @@ UsdImagingDataSourceCameraPrim::Invalidate(
                     locators.insert(
                         HdCameraSchema::GetShutterCloseLocator());
                 } else if (usdName == UsdGeomTokens->exposure) {
-                    // "exposure" maps unchanged to "exposure", and is an
-                    // input to the computed value stored at "exposureScale"
+                    // "exposure" maps unchanged to "exposure", and is an input
+                    // to the computed value stored at "linearExposureScale"
                     locators.insert(
                         HdCameraSchema::GetExposureLocator());
                     locators.insert(
-                        HdCameraSchema::GetExposureScaleLocator());
+                        HdCameraSchema::GetLinearExposureScaleLocator());
                 } else if (usdName == UsdGeomTokens->exposureTime) {
-                    // "exposure:time" maps to "exposureTime", and is an
-                    // input to the computed value stored at "exposureScale"
+                    // "exposure:time" maps to "exposureTime", and is an input
+                    // to the computed value stored at "linearExposureScale"
                     locators.insert(
                         HdCameraSchema::GetExposureTimeLocator());
                     locators.insert(
-                        HdCameraSchema::GetExposureScaleLocator());
+                        HdCameraSchema::GetLinearExposureScaleLocator());
                 } else if (usdName == UsdGeomTokens->exposureIso) {
                     // similar to exposureTime
                     locators.insert(
                         HdCameraSchema::GetExposureIsoLocator());
                     locators.insert(
-                        HdCameraSchema::GetExposureScaleLocator());
+                        HdCameraSchema::GetLinearExposureScaleLocator());
                 } else if (usdName == UsdGeomTokens->exposureFStop) {
                     // similar to exposureTime
                     locators.insert(
                         HdCameraSchema::GetExposureFStopLocator());
                     locators.insert(
-                        HdCameraSchema::GetExposureScaleLocator());
+                        HdCameraSchema::GetLinearExposureScaleLocator());
                 } else if (usdName == UsdGeomTokens->exposureResponsivity) {
                     // similar to exposureTime
                     locators.insert(
                         HdCameraSchema::GetExposureResponsivityLocator());
                     locators.insert(
-                        HdCameraSchema::GetExposureScaleLocator());
+                        HdCameraSchema::GetLinearExposureScaleLocator());
                 } else {
                     locators.insert(
                         HdCameraSchema::GetDefaultLocator().Append(

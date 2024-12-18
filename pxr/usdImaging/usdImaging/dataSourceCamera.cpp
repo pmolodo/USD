@@ -203,7 +203,7 @@ UsdImagingDataSourceCamera::GetNames()
 HdDataSourceBaseHandle
 UsdImagingDataSourceCamera::Get(const TfToken &name)
 {
-    if (name == HdCameraSchemaTokens->exposureScale) {
+    if (name == HdCameraSchemaTokens->linearExposureScale) {
         return _CameraExposureScaleDataSource::New(
             _sceneIndexPath, _usdCamera, _stageGlobals);
     }

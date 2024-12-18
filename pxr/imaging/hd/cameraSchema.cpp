@@ -155,7 +155,7 @@ HdFloatDataSourceHandle
 HdCameraSchema::GetExposureScale() const
 {
     return _GetTypedDataSource<HdFloatDataSource>(
-        HdCameraSchemaTokens->exposureScale);
+        HdCameraSchemaTokens->linearExposureScale);
 }
 
 HdBoolDataSourceHandle
@@ -312,7 +312,7 @@ HdCameraSchema::BuildRetained(
     }
 
     if (exposureScale) {
-        _names[_count] = HdCameraSchemaTokens->exposureScale;
+        _names[_count] = HdCameraSchemaTokens->linearExposureScale;
         _values[_count++] = exposureScale;
     }
 
@@ -660,7 +660,7 @@ HdCameraSchema::GetExposureScaleLocator()
 {
     static const HdDataSourceLocator locator =
         GetDefaultLocator().Append(
-            HdCameraSchemaTokens->exposureScale);
+            HdCameraSchemaTokens->linearExposureScale);
     return locator;
 }
 

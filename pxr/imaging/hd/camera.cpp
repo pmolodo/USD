@@ -273,7 +273,7 @@ HdCamera::Sync(HdSceneDelegate * sceneDelegate,
 
         const VtValue vExposureScale =
             sceneDelegate->GetCameraParamValue(
-                id, HdCameraTokens->exposureScale);
+                id, HdCameraTokens->linearExposureScale);
         if (!vExposureScale.IsEmpty()) {
             _exposureScale = vExposureScale.Get<float>();
         }

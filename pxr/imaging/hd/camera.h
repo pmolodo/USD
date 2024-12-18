@@ -61,7 +61,7 @@ PXR_NAMESPACE_OPEN_SCOPE
     (exposureIso)                                                 \
     (exposureFStop)                                               \
     (exposureResponsivity)                                        \
-    (exposureScale)                                               \
+    (linearExposureScale)                                               \
                                                                   \
     /* how to match window with different aspect */               \
     (windowPolicy)                                                \

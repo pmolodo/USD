@@ -54,7 +54,7 @@ PXR_NAMESPACE_OPEN_SCOPE
     (exposureIso) \
     (exposureFStop) \
     (exposureResponsivity) \
-    (exposureScale) \
+    (linearExposureScale) \
     (focusOn) \
     (dofAspect) \
     (splitDiopter) \

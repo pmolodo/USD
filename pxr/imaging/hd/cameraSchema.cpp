@@ -152,7 +152,7 @@ HdCameraSchema::GetExposureResponsivity() const
 }
 
 HdFloatDataSourceHandle
-HdCameraSchema::GetExposureScale() const
+HdCameraSchema::GetLinearExposureScale() const
 {
     return _GetTypedDataSource<HdFloatDataSource>(
         HdCameraSchemaTokens->linearExposureScale);
@@ -213,7 +213,7 @@ HdCameraSchema::BuildRetained(
         const HdFloatDataSourceHandle &exposureIso,
         const HdFloatDataSourceHandle &exposureFStop,
         const HdFloatDataSourceHandle &exposureResponsivity,
-        const HdFloatDataSourceHandle &exposureScale,
+        const HdFloatDataSourceHandle &linearExposureScale,
         const HdBoolDataSourceHandle &focusOn,
         const HdFloatDataSourceHandle &dofAspect,
         const HdContainerDataSourceHandle &splitDiopter,
@@ -311,9 +311,9 @@ HdCameraSchema::BuildRetained(
         _values[_count++] = exposureResponsivity;
     }
 
-    if (exposureScale) {
+    if (linearExposureScale) {
         _names[_count] = HdCameraSchemaTokens->linearExposureScale;
-        _values[_count++] = exposureScale;
+        _values[_count++] = linearExposureScale;
     }
 
     if (focusOn) {
@@ -480,10 +480,10 @@ HdCameraSchema::Builder::SetExposureResponsivity(
 }
 
 HdCameraSchema::Builder &
-HdCameraSchema::Builder::SetExposureScale(
-    const HdFloatDataSourceHandle &exposureScale)
+HdCameraSchema::Builder::SetLinearExposureScale(
+    const HdFloatDataSourceHandle &linearExposureScale)
 {
-    _exposureScale = exposureScale;
+    _linearExposureScale = linearExposureScale;
     return *this;
 }
 
@@ -548,7 +548,7 @@ HdCameraSchema::Builder::Build()
         _exposureIso,
         _exposureFStop,
         _exposureResponsivity,
-        _exposureScale,
+        _linearExposureScale,
         _focusOn,
         _dofAspect,
         _splitDiopter,
@@ -656,7 +656,7 @@ HdCameraSchema::GetExposureResponsivityLocator()
 
 /* static */
 const HdDataSourceLocator &
-HdCameraSchema::GetExposureScaleLocator()
+HdCameraSchema::GetLinearExposureScaleLocator()
 {
     static const HdDataSourceLocator locator =
         GetDefaultLocator().Append(

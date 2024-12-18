@@ -61,7 +61,7 @@ PXR_NAMESPACE_OPEN_SCOPE
     (exposureIso)                                                 \
     (exposureFStop)                                               \
     (exposureResponsivity)                                        \
-    (linearExposureScale)                                               \
+    (linearExposureScale)                                         \
                                                                   \
     /* how to match window with different aspect */               \
     (windowPolicy)                                                \
@@ -245,7 +245,7 @@ public:
     ///
     /// This the same as the value stored in the exposure attribute on the
     /// underlying camera.  Note that in most cases, you will want to use
-    /// GetExposureScale() instead of this method, as it is the computed
+    /// GetLinearExposureScale() instead of this method, as it is the computed
     /// end result of all related exposure attributes.
     /// GetExposure() is retained as-is for backward compatibility.
     float GetExposure() const {
@@ -257,8 +257,8 @@ public:
     /// Scaling the image brightness by this value will cause the various
     /// exposure controls on \ref UsdGeomCamera to behave like those of a real
     /// camera to control the exposure of the image.
-    float GetExposureScale() const {
-        return _exposureScale;
+    float GetLinearExposureScale() const {
+        return _linearExposureScale;
     }
 
     TfToken GetLensDistortionType() const {
@@ -344,7 +344,7 @@ protected:
     float                   _exposureIso;
     float                   _exposureFStop;
     float                   _exposureResponsivity;
-    float                   _exposureScale;
+    float                   _linearExposureScale;
 
     // lens distortion
     TfToken                 _lensDistortionType;

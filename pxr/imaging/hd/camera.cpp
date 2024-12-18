@@ -45,7 +45,7 @@ HdCamera::HdCamera(SdfPath const &id)
   , _exposureIso(100.0f)
   , _exposureFStop(1.0f)
   , _exposureResponsivity(1.0f)
-  , _exposureScale(1.0f)
+  , _linearExposureScale(1.0f)
   , _lensDistortionType(HdCameraTokens->standard)
   , _lensDistortionK1(0.0f)
   , _lensDistortionK2(0.0f)
@@ -271,11 +271,11 @@ HdCamera::Sync(HdSceneDelegate * sceneDelegate,
             _exposureResponsivity = vExposureResponsivity.Get<float>();
         }
 
-        const VtValue vExposureScale =
+        const VtValue vLinearExposureScale =
             sceneDelegate->GetCameraParamValue(
                 id, HdCameraTokens->linearExposureScale);
-        if (!vExposureScale.IsEmpty()) {
-            _exposureScale = vExposureScale.Get<float>();
+        if (!vLinearExposureScale.IsEmpty()) {
+            _linearExposureScale = vLinearExposureScale.Get<float>();
         }
 
         const VtValue vLensDistortionType =
